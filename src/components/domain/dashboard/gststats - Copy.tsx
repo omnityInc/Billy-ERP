@@ -1,11 +1,11 @@
 import { Text, View } from "react-native";
 
-const SignIn = () => {
+const QuickAction = () => {
   return (
     <View>
-      <Text>SignIn</Text>
+      <Text>QuickAction</Text>
     </View>
   );
 };
 
-export default SignIn;
+export default QuickAction;
