@@ -407,3 +407,102 @@ for (let i = 1; i <= 500; i++) {
     status: invoiceStatus(paymentType),
   });
 }
+
+const vendorParties = parties.filter((p) => p.type === "VENDOR");
+
+for (let i = 1; i <= 300; i++) {
+  const party = pick(vendorParties);
+  const paymentType = pick(paymentTypes);
+  const date = randomDate();
+  const dueDate = paymentType === "CREDIT" ? addDays(date, party.creditDays || 30) : date;
+  
+  const items: InvoiceItem[] = [];
+  let totalTaxablePaise = 0;
+  let totalTaxPaise = 0;
+
+  const numItems = random(1, 5);
+  for (let j = 1; j <= numItems; j++) {
+    const product = pick(products);
+    const qty = random(1, 50);
+    const ratePaise = product.purchasePricePaise;
+    const discountPercent = product.purchaseDiscount || 0;
+    
+    const basePaise = qty * ratePaise;
+    const discountPaise = Math.round(basePaise * (discountPercent / 100));
+    const taxablePaise = basePaise - discountPaise;
+    
+    const taxPercent = product.tax;
+    const taxPaise = Math.round(taxablePaise * (taxPercent / 100));
+    const totalPaise = taxablePaise + taxPaise;
+
+    totalTaxablePaise += taxablePaise;
+    totalTaxPaise += taxPaise;
+
+    items.push({
+      id: `PUR-ITM-${i}-${j}`,
+      productId: product.id,
+      productName: product.name,
+      qty,
+      uom: product.uom,
+      ratePaise: ratePaise,
+      discountPercent,
+      taxablePaise: taxablePaise as Paise,
+      taxPercent,
+      taxAmountPaise: taxPaise as Paise,
+      totalPaise: totalPaise as Paise,
+    });
+  }
+
+  const grandTotalRaw = totalTaxablePaise + totalTaxPaise;
+  const grandTotalRounded = Math.round(grandTotalRaw / 100) * 100;
+  const roundOffPaise = grandTotalRounded - grandTotalRaw;
+
+  purchaseInvoices.push({
+    id: `PI${pad(i, 5)}`,
+    invoiceNo: `PI-25-26-${pad(i, 5)}`,
+    invoiceType: "PURCHASE",
+    partyId: party.id,
+    date,
+    paymentType,
+    dueDate,
+    items,
+    taxableAmountPaise: totalTaxablePaise as Paise,
+    taxAmountPaise: totalTaxPaise as Paise,
+    roundOffPaise: roundOffPaise as Paise,
+    grandTotalPaise: grandTotalRounded as Paise,
+    status: invoiceStatus(paymentType),
+  });
+}
+
+const allInvoices = [...salesInvoices, ...purchaseInvoices];
+for (let i = 1; i <= 600; i++) {
+  const inv = pick(allInvoices);
+  payments.push({
+    id: `PAY${pad(i, 5)}`,
+    receiptNo: `REC-${pad(i, 5)}`,
+    invoiceId: inv.id,
+    partyId: inv.partyId,
+    amountPaise: inv.grandTotalPaise,
+    paymentType: pick(paymentTypes),
+    paymentDate: addDays(inv.date, random(1, 10)),
+    remarks: "Payment received",
+  });
+}
+
+const transporters = ["VRL Logistics", "Patel Roadways", "Shree Maruti", "Gati", "TCI Freight"];
+for (let i = 1; i <= 200; i++) {
+  const inv = pick(salesInvoices);
+  lorryReceipts.push({
+    id: `LR${pad(i, 5)}`,
+    lrNo: `LR-${random(1000, 9999)}`,
+    invoiceId: inv.id,
+    transporter: pick(transporters),
+    vehicleNo: `GJ05XX${random(1000, 9999)}`,
+    driverName: "Driver Name",
+    driverPhone: `98${random(10000000, 99999999)}`,
+    from: "Surat",
+    to: "Mumbai",
+    freightPaise: toPaise(random(500, 5000)),
+    weight: random(100, 5000),
+  });
+}

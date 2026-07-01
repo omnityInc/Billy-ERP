@@ -7,14 +7,23 @@ import { OutstandingSection } from "@/components/dashboard/OutstandingSection";
 import { PerformanceChart } from "@/components/dashboard/PerformanceChart";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
-import { SUMMARY_CARDS } from "@/constants/static-data";
 import { Paise } from "@/utils/format";
 import { StatusBar } from "expo-status-bar";
 import { Search } from "lucide-react-native";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useMockStore } from "@/store/mockStore";
 
 export default function Dashboard() {
+  const salesInvoices = useMockStore((state) => state.salesInvoices);
+  const purchaseInvoices = useMockStore((state) => state.purchaseInvoices);
+
+  const totalSales = salesInvoices.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) as Paise;
+  const totalSalesGst = salesInvoices.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) as Paise;
+
+  const totalPurchase = purchaseInvoices.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) as Paise;
+  const totalPurchaseGst = purchaseInvoices.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) as Paise;
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#EEF2FF" }}
@@ -26,8 +35,8 @@ export default function Dashboard() {
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-6 mb-4 mt-2">
-          <View className="flex-row items-center bg-white rounded-xl px-4 py-3 border border-natural-200 shadow-sm">
+        <View className="px-4 mb-4 mt-2">
+          <View className="flex-row items-center bg-white rounded-[14px] px-4 py-3 border border-natural-100 shadow-sm">
             <Search color="#94A3B8" size={20} />
             <TextInput
               placeholder="Search for anything..."
@@ -44,17 +53,17 @@ export default function Dashboard() {
 
         <QuickActions />
 
-        <View className="flex-row gap-x-4 px-6">
+        <View className="flex-row gap-x-4 px-4">
           <SummaryCard
             title="Sales"
-            total={SUMMARY_CARDS.sales.total}
-            gst={SUMMARY_CARDS.sales.gst}
+            total={totalSales}
+            gst={totalSalesGst}
             trend="down"
           />
           <SummaryCard
             title="Purchase"
-            total={SUMMARY_CARDS.purchase.total}
-            gst={SUMMARY_CARDS.purchase.gst}
+            total={totalPurchase}
+            gst={totalPurchaseGst}
             trend="up"
           />
         </View>

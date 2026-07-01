@@ -1,5 +1,6 @@
 import { Package, Receipt, Truck, Wallet } from "lucide-react-native";
 import { Pressable, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 
 const ACTIONS = [
   { id: "sales", label: "Sales", icon: Receipt },
@@ -9,17 +10,23 @@ const ACTIONS = [
 ];
 
 export function QuickActions() {
+  const router = useRouter();
+
   return (
-    <View className="mx-6 mb-6">
+    <View className="mx-4 mb-6">
       <View className="flex-row justify-between items-start">
         {ACTIONS.map((action) => {
           const Icon = action.icon;
           return (
-            <Pressable key={action.id} className="items-center w-16">
-              <View className="w-16 h-16 bg-white rounded-[14px] items-center justify-center border border-natural-100 mb-2 shadow-sm">
+            <Pressable 
+              key={action.id} 
+              className="items-center w-16"
+              onPress={() => router.push(`/${action.id}` as any)}
+            >
+              <View className="w-16 h-16 bg-white rounded-[14px] items-center justify-center border border-natural-100 mb-2 shadow">
                 <Icon color="#0F172A" size={24} />
               </View>
-              <Text className="text-[10px] font-medium text-natural-800 text-center">
+              <Text className="text-xs font-medium text-natural-900 text-center">
                 {action.label}
               </Text>
             </Pressable>

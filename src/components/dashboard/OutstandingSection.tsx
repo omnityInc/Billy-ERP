@@ -21,7 +21,7 @@ export function OutstandingSection({ title, totalLabel, totalAmount, data }: Out
   const sum = data.reduce((acc, curr) => acc + curr.amount, 0);
   
   return (
-    <View className="mb-8 px-6">
+    <View className="mb-8 px-4">
       <Text className="text-[22px] font-semibold text-black mb-1 leading-tight">{title}</Text>
       <Text className="text-[15px] font-medium text-natural-700 mb-4">{totalLabel}: {formatINR(totalAmount)}</Text>
       

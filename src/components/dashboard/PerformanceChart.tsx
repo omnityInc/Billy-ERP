@@ -13,7 +13,7 @@ const PERFORMANCE_DATA: ChartDataPoint[] = [
 
 export function PerformanceChart() {
   return (
-    <View className="px-6 mb-2">
+    <View className="px-4 mb-2">
       <AreaChart
         data={PERFORMANCE_DATA}
         title="Performance"

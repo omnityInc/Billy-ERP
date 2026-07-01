@@ -12,7 +12,7 @@ const CASH_FLOW_DATA: ChartDataPoint[] = [
 
 export function CashFlowChart() {
   return (
-    <View className="px-6 mb-6">
+    <View className="px-4 mb-6">
       <AreaChart
         data={CASH_FLOW_DATA}
         title="Cash Flow"
