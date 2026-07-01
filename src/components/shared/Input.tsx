@@ -23,7 +23,7 @@ export const Input = forwardRef<TextInput, InputProps>(({
   return (
     <View className={containerClassName}>
       {label && (
-        <Text className="body text-black mb-2">
+        <Text className="text-sm text-black mb-2">
           {label}
           {required && <Text className="text-danger">*</Text>}
         </Text>
@@ -32,13 +32,13 @@ export const Input = forwardRef<TextInput, InputProps>(({
         {leftIcon && <View className="mr-2">{leftIcon}</View>}
         <TextInput
           ref={ref}
-          className={`flex-1 body text-black h-full ${className}`}
+          className={`flex-1 text-sm text-black h-full ${className}`}
           placeholderTextColor="#9CA3AF"
           {...props}
         />
         {rightIcon && <View className="ml-2">{rightIcon}</View>}
       </View>
-      {error && <Text className="caption text-danger mt-1">{error}</Text>}
+      {error && <Text className="text-xs text-danger mt-1">{error}</Text>}
     </View>
   );
 });

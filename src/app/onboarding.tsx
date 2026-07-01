@@ -49,9 +49,7 @@ export default function Onboarding() {
   };
 
   const handleSkip = () => {
-    const lastSlide = SLIDES.length - 1;
-    flatListRef.current?.scrollToIndex({ index: lastSlide, animated: true });
-    setCurrentSlide(lastSlide);
+    router.replace("/(auth)/log-in");
   };
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
@@ -74,7 +72,7 @@ export default function Onboarding() {
         <View className="px-6 h-10 flex-row justify-end items-center">
           {!isLastSlide && (
             <Pressable onPress={handleSkip} className="p-2">
-              <Text className="body text-natural-800">Skip</Text>
+              <Text className="text-sm font-medium text-natural-800">Skip</Text>
             </Pressable>
           )}
         </View>
@@ -97,10 +95,10 @@ export default function Onboarding() {
 
               {/* Text Area */}
               <View className="items-center">
-                <Text className="h2 text-center text-black mb-4">
+                <Text className="text-[28px] font-bold leading-tight text-center text-black mb-4">
                   {item.title}
                 </Text>
-                <Text className="body text-center text-natural-500 mb-8 leading-relaxed">
+                <Text className="text-sm text-center text-natural-500 mb-8 leading-relaxed">
                   {item.subtitle}
                 </Text>
               </View>

@@ -60,7 +60,7 @@ export default function SignUp() {
                 style={{ width: 48, height: 48, marginRight: 16 }}
                 resizeMode="contain"
               />
-              <Text className="h2 text-black flex-1 leading-tight">
+              <Text className="text-[28px] font-bold leading-tight text-black flex-1">
                 Let's get you started with Billy!
               </Text>
             </View>
@@ -93,14 +93,14 @@ export default function SignUp() {
                 required
                 placeholder="Enter your phone number"
                 keyboardType="phone-pad"
-                leftIcon={<Text className="body text-black ml-1">+91</Text>}
+                leftIcon={<Text className="text-sm font-normal text-black ml-1">+91</Text>}
                 value={phone}
                 onChangeText={setPhone}
               />
 
               {/* GST Registered? */}
               <View>
-                <Text className="body text-black mb-2">GST Registered?</Text>
+                <Text className="text-sm font-normal text-black mb-2">GST Registered?</Text>
                 <View className="flex-row gap-x-4">
                   <Pressable
                     onPress={() => setGstRegistered(true)}
@@ -118,7 +118,7 @@ export default function SignUp() {
                     ) : (
                       <Circle color="#9CA3AF" size={20} />
                     )}
-                    <Text className="body text-black">Yes</Text>
+                    <Text className="text-sm font-normal text-black">Yes</Text>
                   </Pressable>
 
                   <Pressable
@@ -137,7 +137,7 @@ export default function SignUp() {
                     ) : (
                       <Circle color="#9CA3AF" size={20} />
                     )}
-                    <Text className="body text-black">No</Text>
+                    <Text className="text-sm font-normal text-black">No</Text>
                   </Pressable>
                 </View>
               </View>
@@ -175,7 +175,7 @@ export default function SignUp() {
             {/* Footer Privacy */}
             <View className="flex-row items-center justify-center gap-x-2">
               <Lock color="#94A3B8" size={14} />
-              <Text className="caption text-natural-500">
+              <Text className="text-[10px] leading-[14px] text-natural-500">
                 We respect your privacy. Your information is safe with us.
               </Text>
             </View>

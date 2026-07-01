@@ -39,7 +39,7 @@ export function Button({
 
   // Text classes
   const textClasses = [
-    "h5",
+    "text-lg font-medium",
     isPrimary ? "text-white" : "text-black",
   ].filter(Boolean).join(' ');
 

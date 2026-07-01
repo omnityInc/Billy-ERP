@@ -45,10 +45,10 @@ export default function LogIn() {
                 style={{ width: 64, height: 64, marginBottom: 24 }}
                 resizeMode="contain"
               />
-              <Text className="h2 text-black mb-2 text-center">
+              <Text className="text-[28px] font-bold leading-9 text-black mb-2 text-center">
                 Welcome to Billy
               </Text>
-              <Text className="body text-natural-500 text-center">
+              <Text className="text-sm text-natural-500 text-center">
                 The ultimate ERP for modern business.
               </Text>
             </View>
@@ -100,16 +100,16 @@ export default function LogIn() {
 
             {/* Forgot Password */}
             <View className="items-center mb-10">
-              <Text className="body-sm text-natural-400 mb-1">
+              <Text className="text-[13px] leading-5 text-natural-400 mb-1">
                 Forgot your password?
               </Text>
               <Pressable>
-                <Text className="body-sm text-black underline font-medium">
+                <Text className="text-[13px] leading-5 text-black underline font-medium">
                   Reset your password
                 </Text>
               </Pressable>
 
-              <Text className="body-sm text-natural-400 mt-6">
+              <Text className="text-[13px] leading-5 text-natural-400 mt-6">
                 Don't have an account?{" "}
                 <Text
                   className="text-black underline font-medium"
@@ -125,7 +125,7 @@ export default function LogIn() {
 
             {/* Footer Terms */}
             <View className="items-center mt-4">
-              <Text className="caption text-natural-500 text-center">
+              <Text className="text-[10px] leading-[14px] text-natural-500 text-center">
                 By logging in you agree to our{" "}
                 <Text className="text-black underline">Terms</Text>,{" "}
                 <Text className="text-black underline">Privacy Policy</Text>,
