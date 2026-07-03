@@ -10,6 +10,8 @@ interface MockState {
   payments: Payment[];
   lorryReceipts: LorryReceipt[];
   addPayment: (payment: Payment) => void;
+  deleteProduct: (id: string) => void;
+  updateProduct: (id: string, updates: Partial<Product>) => void;
 }
 
 export const useMockStore = create<MockState>((set) => ({
@@ -44,4 +46,12 @@ export const useMockStore = create<MockState>((set) => ({
         purchaseInvoices: state.purchaseInvoices.map(updateInvoice),
       };
     }),
+  deleteProduct: (id) =>
+    set((state) => ({
+      products: state.products.filter((p) => p.id !== id),
+    })),
+  updateProduct: (id, updates) =>
+    set((state) => ({
+      products: state.products.map((p) => (p.id === id ? { ...p, ...updates } : p)),
+    })),
 }));

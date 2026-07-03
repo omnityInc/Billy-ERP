@@ -10,9 +10,14 @@ import { useMockStore } from "@/store/mockStore";
 import { formatINR } from "@/utils/format";
 import { Package, Hash, IndianRupee } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
+import { InventoryQuickViewModal } from "@/components/shared/InventoryQuickViewModal";
 
 export default function InventoryScreen() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("All Items");
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const products = useMockStore((state) => state.products);
 
   const filteredProducts = products.filter(p => {
@@ -20,6 +25,18 @@ export default function InventoryScreen() {
     if (activeTab === "Out of Stock") return p.availableQty === 0;
     return true;
   });
+
+  const handleProductPress = (product: any) => {
+    setSelectedProduct(product);
+    setIsModalVisible(true);
+  };
+
+  const handleViewDetails = () => {
+    setIsModalVisible(false);
+    if (selectedProduct) {
+      router.push(`/inventory/${selectedProduct.id}` as any);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -46,6 +63,7 @@ export default function InventoryScreen() {
         renderItem={({ item, index }: { item: any, index: number }) => {
           return (
             <ListCard
+              onPress={() => handleProductPress(item)}
               icon={<Package size={20} />}
               title={item.name}
               subtitle={`Code: ${item.barcode} • HSN: ${item.hsnSac}`}
@@ -58,6 +76,13 @@ export default function InventoryScreen() {
             />
           );
         }}
+      />
+
+      <InventoryQuickViewModal
+        product={selectedProduct}
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onViewDetails={handleViewDetails}
       />
     </SafeAreaView>
   );
