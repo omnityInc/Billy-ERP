@@ -8,6 +8,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
+import { images } from "@/constants/images";
 import "../global.css";
 
 export default function SplashScreen() {
@@ -24,7 +25,7 @@ export default function SplashScreen() {
 
   return (
     <ImageBackground
-      source={require("../../assets/images/splashpattern.png")}
+      source={images.splashpattern}
       style={styles.container}
       resizeMode="cover"
     >
@@ -32,7 +33,7 @@ export default function SplashScreen() {
 
       <View className="flex-1 justify-center items-center">
         <Image
-          source={require("../../assets/images/icon.png")}
+          source={images.icon}
           style={{ width: 120, height: 120 }}
           resizeMode="contain"
         />

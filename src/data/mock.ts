@@ -475,18 +475,32 @@ for (let i = 1; i <= 300; i++) {
 }
 
 const allInvoices = [...salesInvoices, ...purchaseInvoices];
-for (let i = 1; i <= 600; i++) {
-  const inv = pick(allInvoices);
-  payments.push({
-    id: `PAY${pad(i, 5)}`,
-    receiptNo: `REC-${pad(i, 5)}`,
-    invoiceId: inv.id,
-    partyId: inv.partyId,
-    amountPaise: inv.grandTotalPaise,
-    paymentType: pick(paymentTypes),
-    paymentDate: addDays(inv.date, random(1, 10)),
-    remarks: "Payment received",
-  });
+for (const inv of allInvoices) {
+  if (inv.status === "UNPAID") continue;
+
+  if (inv.status === "PAID") {
+    payments.push({
+      id: `PAY${pad(payments.length + 1, 5)}`,
+      receiptNo: `REC-${pad(payments.length + 1, 5)}`,
+      invoiceId: inv.id,
+      partyId: inv.partyId,
+      amountPaise: inv.grandTotalPaise,
+      paymentType: pick(paymentTypes),
+      paymentDate: addDays(inv.date, random(1, 10)),
+      remarks: "Payment received",
+    });
+  } else if (inv.status === "PARTIAL") {
+    payments.push({
+      id: `PAY${pad(payments.length + 1, 5)}`,
+      receiptNo: `REC-${pad(payments.length + 1, 5)}`,
+      invoiceId: inv.id,
+      partyId: inv.partyId,
+      amountPaise: Math.floor(inv.grandTotalPaise / 2) as Paise,
+      paymentType: pick(paymentTypes),
+      paymentDate: addDays(inv.date, random(1, 10)),
+      remarks: "Partial payment received",
+    });
+  }
 }
 
 const transporters = ["VRL Logistics", "Patel Roadways", "Shree Maruti", "Gati", "TCI Freight"];

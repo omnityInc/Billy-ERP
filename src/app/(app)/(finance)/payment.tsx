@@ -42,7 +42,7 @@ export default function PaymentScreen() {
             />
           </View>
         }
-        renderItem={({ item }) => {
+        renderItem={({ item, index }: { item: any, index: number }) => {
           const party = parties.find(p => p.id === item.partyId);
           return (
             <ListCard

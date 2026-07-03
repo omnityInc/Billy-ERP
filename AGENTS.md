@@ -1,6 +1,6 @@
 ## Project Overview
 
-Billy is a local-first, cross-platform ERP application built with Expo, designed for Indian MSMEs.
+Billy is an online-first, cross-platform ERP application built with Expo, designed for Indian MSMEs.
 
 Core domains include:
 
@@ -27,7 +27,7 @@ Use the existing stack unless the user explicitly approves changes.
 | Language           | TypeScript (Strict)         |
 | Styling            | NativeWind v5               |
 | Icons              | Lucide React Native         |
-| Local Database     | Drizzle ORM + `expo-sqlite` |
+| Data Layer         | TanStack Query + Supabase |
 | State Management   | Zustand                     |
 | Forms & Validation | React Hook Form + Zod       |
 | Dates              | `date-fns`                  |
@@ -267,13 +267,11 @@ export const PANSchema = z.string().refine(isValidPAN, "Invalid PAN format");
 
 ## Data, Forms & State Guidelines
 
-### Local-First Database (Drizzle ORM + expo-sqlite)
+### Online-First Data Layer (TanStack Query + Supabase)
 
-- Always assume the app must work offline. Read/write from the local SQLite database first.
-- Define all table schemas in `lib/db/schema.ts` using Drizzle's schema builder.
-- All migrations live in `lib/db/migrations/`. Never mutate the DB schema manually.
-- Do not run raw SQL strings in components. Use Drizzle's query builder.
-- Do not use direct API fetches in components unless explicitly instructed.
+- Always build the app assuming an online-first approach against a Fastify/Supabase backend, with TanStack Query used for caching and state management.
+- Do not use `expo-sqlite` or Drizzle ORM for business data.
+- API interactions should be managed through TanStack Query, persisting to MMKV for fast reloads.
 
 ### Form Handling (React Hook Form + Zod)
 
@@ -444,7 +442,7 @@ Use Lucide React Native consistently. Reuse existing icons whenever possible.
 Use centralized image exports. Never import assets directly throughout the application.
 
 ```typescript
-// assets/images/index.ts
+// src/constants/images.ts
 import logo from "@/assets/images/logo.png";
 import icon from "@/assets/images/icon-black.png";
 
@@ -453,7 +451,7 @@ export const images = { logo, icon };
 
 ```tsx
 // Usage
-import { images } from "@/assets/images";
+import { images } from "@/constants/images";
 <Image source={images.logo} />;
 ```
 
@@ -494,13 +492,9 @@ as any
 
 ---
 
-## Backup & Export
+## Architecture Alignment
 
-Because Billy is local-first, the user's data lives on-device. Before any module ships to production:
-
-- Confirm whether that module's data is included in the backup scope.
-- The backup/export strategy (e.g., export to JSON, cloud sync) must be considered at the architecture stage, not retrofitted later.
-- Do not make architectural decisions that would make future backup/sync impossible (e.g., non-serializable local IDs, device-only UUIDs without a sync key).
+Billy is online-first. Do not make architectural decisions that assume business data permanently resides on the local device.
 
 ---
 

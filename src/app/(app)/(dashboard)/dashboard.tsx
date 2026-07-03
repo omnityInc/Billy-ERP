@@ -10,15 +10,40 @@ import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { Paise } from "@/utils/format";
 import { StatusBar } from "expo-status-bar";
 import { Search, CircleAlert, ArrowRight } from "lucide-react-native";
-import { ScrollView, Text, TextInput, View, Pressable } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TextInput, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useMockStore } from "@/store/mockStore";
+import { useQuery } from "@tanstack/react-query";
+import { mockApi } from "@/data/mockApi";
 import { useRouter } from "expo-router";
 
 export default function Dashboard() {
   const router = useRouter();
-  const salesInvoices = useMockStore((state) => state.salesInvoices);
-  const purchaseInvoices = useMockStore((state) => state.purchaseInvoices);
+
+  const { data: salesInvoices, isLoading: isSalesLoading, isError: isSalesError } = useQuery({
+    queryKey: ["salesInvoices"],
+    queryFn: mockApi.getSalesInvoices,
+  });
+
+  const { data: purchaseInvoices, isLoading: isPurchaseLoading, isError: isPurchaseError } = useQuery({
+    queryKey: ["purchaseInvoices"],
+    queryFn: mockApi.getPurchaseInvoices,
+  });
+
+  if (isSalesLoading || isPurchaseLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF", justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#3B82F6" />
+      </SafeAreaView>
+    );
+  }
+
+  if (isSalesError || isPurchaseError || !salesInvoices || !purchaseInvoices) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF", justifyContent: "center", alignItems: "center" }}>
+        <Text className="body-medium text-natural-500">Error loading dashboard data.</Text>
+      </SafeAreaView>
+    );
+  }
 
   const totalSales = salesInvoices.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) as Paise;
   const totalSalesGst = salesInvoices.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) as Paise;

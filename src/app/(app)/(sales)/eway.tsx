@@ -45,7 +45,7 @@ export default function EWayScreen() {
             />
           </View>
         }
-        renderItem={({ item, index }) => {
+        renderItem={({ item, index }: { item: any, index: number }) => {
           const status = index % 3 === 0 ? "GENERATED" : index % 3 === 1 ? "PENDING" : "CANCELLED";
           const variant = index % 3 === 0 ? "ACTIVE" : index % 3 === 1 ? "PENDING" : "INACTIVE";
           return (

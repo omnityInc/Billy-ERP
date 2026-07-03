@@ -5,7 +5,6 @@ import { GST_STATE_CODES } from "@/constants/gst";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  ChevronDown,
   Circle,
   CircleCheck,
   FileText,
@@ -14,7 +13,7 @@ import {
   Store,
   User,
 } from "lucide-react-native";
-import { useState } from "react";
+import { images } from "@/constants/images";
 import {
   Image,
   KeyboardAvoidingView,
@@ -25,19 +24,67 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useAuthStore } from "@/store/authStore";
+import { isValidGSTIN } from "@/utils/validators";
+
+const signupSchema = z
+  .object({
+    fullName: z.string().min(2, "Full name is required"),
+    companyName: z.string().min(2, "Company name is required"),
+    phone: z.string().regex(/^[0-9]{10}$/, "Phone number must be 10 digits"),
+    gstRegistered: z.boolean(),
+    gstNumber: z.string().optional(),
+    state: z.string().min(1, "State is required"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.gstRegistered) {
+      if (!data.gstNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "GST Number is required",
+          path: ["gstNumber"],
+        });
+      } else if (!isValidGSTIN(data.gstNumber)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid GST Number",
+          path: ["gstNumber"],
+        });
+      }
+    }
+  });
+
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignUp() {
-  const [fullName, setFullName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [gstRegistered, setGstRegistered] = useState(true);
-  const [gstNumber, setGstNumber] = useState("");
-  const [state, setState] = useState("");
-
   const router = useRouter();
+  const login = useAuthStore((state) => state.login);
 
-  const handleSignup = () => {
-    // Navigate to app for now
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      fullName: "",
+      companyName: "",
+      phone: "",
+      gstRegistered: true,
+      gstNumber: "",
+      state: "",
+    },
+  });
+
+  const isGstRegistered = watch("gstRegistered");
+
+  const onSubmit = (data: SignupFormValues) => {
+    login();
     router.replace("/(app)/(dashboard)/dashboard");
   };
 
@@ -56,113 +103,189 @@ export default function SignUp() {
             {/* Logo and Header */}
             <View className="flex-row items-center mb-10">
               <Image
-                source={require("../../../assets/images/icon-black.png")}
+                source={images.iconBlack}
                 style={{ width: 48, height: 48, marginRight: 16 }}
                 resizeMode="contain"
               />
-              <Text className="text-[28px] font-bold leading-tight text-black flex-1">
-                Let's get you started with Billy!
+              <Text className="title-huge text-black flex-1">
+                Let&apos;s get you started with Billy!
               </Text>
             </View>
 
             {/* Form */}
             <View className="gap-y-4 mb-8">
               {/* Full Name */}
-              <Input
-                label="Full Name"
-                required
-                placeholder="Enter your full name"
-                leftIcon={<User color="#6B7280" size={20} />}
-                value={fullName}
-                onChangeText={setFullName}
+              <Controller
+                control={control}
+                name="fullName"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    label="Full Name"
+                    required
+                    placeholder="Enter your full name"
+                    leftIcon={<User color="#6B7280" size={20} />}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.fullName?.message}
+                  />
+                )}
               />
 
               {/* Company Name */}
-              <Input
-                label="Company Name"
-                required
-                placeholder="Enter your company name"
-                leftIcon={<Store color="#6B7280" size={20} />}
-                value={companyName}
-                onChangeText={setCompanyName}
+              <Controller
+                control={control}
+                name="companyName"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    label="Company Name"
+                    required
+                    placeholder="Enter your company name"
+                    leftIcon={<Store color="#6B7280" size={20} />}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.companyName?.message}
+                  />
+                )}
               />
 
               {/* Phone */}
-              <Input
-                label="Phone"
-                required
-                placeholder="Enter your phone number"
-                keyboardType="phone-pad"
-                leftIcon={<Text className="text-sm font-normal text-black ml-1">+91</Text>}
-                value={phone}
-                onChangeText={setPhone}
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    label="Phone"
+                    required
+                    placeholder="Enter your phone number"
+                    keyboardType="phone-pad"
+                    leftIcon={
+                      <Text className="body-medium-regular text-black ml-1">
+                        +91
+                      </Text>
+                    }
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors.phone?.message}
+                  />
+                )}
               />
 
               {/* GST Registered? */}
-              <View>
-                <Text className="text-sm font-normal text-black mb-2">GST Registered?</Text>
-                <View className="flex-row gap-x-4">
-                  <Pressable
-                    onPress={() => setGstRegistered(true)}
-                    className={`flex-1 h-14 border rounded-xl flex-row items-center px-4 gap-x-2 ${
-                      !gstRegistered && "border-natural-100 bg-natural-50"
-                    }`}
-                    style={
-                      gstRegistered
-                        ? { backgroundColor: "#DCFCE7", borderColor: "#22C55E" }
-                        : {}
-                    }
-                  >
-                    {gstRegistered ? (
-                      <CircleCheck color="#22C55E" fill="#DCFCE7" size={20} />
-                    ) : (
-                      <Circle color="#9CA3AF" size={20} />
-                    )}
-                    <Text className="text-sm font-normal text-black">Yes</Text>
-                  </Pressable>
+              <Controller
+                control={control}
+                name="gstRegistered"
+                render={({ field: { onChange, value } }) => (
+                  <View>
+                    <Text className="body-medium-regular text-black mb-2">
+                      GST Registered?
+                    </Text>
+                    <View className="flex-row gap-x-4">
+                      <Pressable
+                        onPress={() => {
+                          onChange(true);
+                        }}
+                        className={`flex-1 h-14 border rounded-xl flex-row items-center px-4 gap-x-2 ${
+                          !value && "border-natural-100 bg-natural-50"
+                        }`}
+                        style={
+                          value
+                            ? {
+                                backgroundColor: "#DCFCE7",
+                                borderColor: "#22C55E",
+                              }
+                            : {}
+                        }
+                      >
+                        {value ? (
+                          <CircleCheck
+                            color="#22C55E"
+                            fill="#DCFCE7"
+                            size={20}
+                          />
+                        ) : (
+                          <Circle color="#9CA3AF" size={20} />
+                        )}
+                        <Text className="body-medium-regular text-black">
+                          Yes
+                        </Text>
+                      </Pressable>
 
-                  <Pressable
-                    onPress={() => setGstRegistered(false)}
-                    className={`flex-1 h-14 border rounded-xl flex-row items-center px-4 gap-x-2 ${
-                      gstRegistered && "border-natural-100 bg-natural-50"
-                    }`}
-                    style={
-                      !gstRegistered
-                        ? { backgroundColor: "#DCFCE7", borderColor: "#22C55E" }
-                        : {}
-                    }
-                  >
-                    {!gstRegistered ? (
-                      <CircleCheck color="#22C55E" fill="#DCFCE7" size={20} />
-                    ) : (
-                      <Circle color="#9CA3AF" size={20} />
+                      <Pressable
+                        onPress={() => {
+                          onChange(false);
+                          setValue("gstNumber", "");
+                        }}
+                        className={`flex-1 h-14 border rounded-xl flex-row items-center px-4 gap-x-2 ${
+                          value && "border-natural-100 bg-natural-50"
+                        }`}
+                        style={
+                          !value
+                            ? {
+                                backgroundColor: "#DCFCE7",
+                                borderColor: "#22C55E",
+                              }
+                            : {}
+                        }
+                      >
+                        {!value ? (
+                          <CircleCheck
+                            color="#22C55E"
+                            fill="#DCFCE7"
+                            size={20}
+                          />
+                        ) : (
+                          <Circle color="#9CA3AF" size={20} />
+                        )}
+                        <Text className="body-medium-regular text-black">
+                          No
+                        </Text>
+                      </Pressable>
+                    </View>
+                    {errors.gstRegistered && (
+                      <Text className="text-red-500 mt-1">
+                        {errors.gstRegistered.message}
+                      </Text>
                     )}
-                    <Text className="text-sm font-normal text-black">No</Text>
-                  </Pressable>
-                </View>
-              </View>
+                  </View>
+                )}
+              />
 
               {/* GST Number */}
-              {gstRegistered && (
-                <Input
-                  label="GST Number"
-                  required
-                  placeholder="Enter your GST number"
-                  leftIcon={<FileText color="#6B7280" size={20} />}
-                  value={gstNumber}
-                  onChangeText={setGstNumber}
+              {isGstRegistered && (
+                <Controller
+                  control={control}
+                  name="gstNumber"
+                  render={({ field: { onChange, value } }) => (
+                    <Input
+                      label="GST Number"
+                      required
+                      placeholder="Enter your GST number"
+                      leftIcon={<FileText color="#6B7280" size={20} />}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.gstNumber?.message}
+                      autoCapitalize="characters"
+                    />
+                  )}
                 />
               )}
 
               {/* State */}
-              <Dropdown
-                label="State"
-                required
-                placeholder="Select your business state"
-                leftIcon={<MapPin color="#6B7280" size={20} />}
-                options={GST_STATE_CODES}
-                value={state}
-                onSelect={setState}
+              <Controller
+                control={control}
+                name="state"
+                render={({ field: { onChange, value } }) => (
+                  <Dropdown
+                    label="State"
+                    required
+                    placeholder="Select your business state"
+                    leftIcon={<MapPin color="#6B7280" size={20} />}
+                    options={GST_STATE_CODES}
+                    value={value}
+                    onSelect={onChange}
+                    error={errors.state?.message}
+                  />
+                )}
               />
             </View>
 
@@ -170,12 +293,16 @@ export default function SignUp() {
             <View className="flex-1" />
 
             {/* Submit Button */}
-            <Button title="Continue" onPress={handleSignup} className="mb-8" />
+            <Button
+              title="Continue"
+              onPress={handleSubmit(onSubmit)}
+              className="mb-8"
+            />
 
             {/* Footer Privacy */}
             <View className="flex-row items-center justify-center gap-x-2">
               <Lock color="#94A3B8" size={14} />
-              <Text className="text-[10px] leading-[14px] text-natural-500">
+              <Text className="micro text-natural-500">
                 We respect your privacy. Your information is safe with us.
               </Text>
             </View>

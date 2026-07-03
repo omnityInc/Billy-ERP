@@ -1,15 +1,17 @@
 import React from 'react';
 import { Pressable, View, Text } from "react-native";
 import { useRouter } from "expo-router";
-import { useMockStore } from "@/store/mockStore";
+import { useQuery } from "@tanstack/react-query";
+import { mockApi } from "@/data/mockApi";
 import { formatCompactINR } from "@/utils/format";
 import { CircleAlert } from "lucide-react-native";
 
 export function NeedsAttentionSection() {
     const router = useRouter();
-    const products = useMockStore((state) => state.products);
-    const salesInvoices = useMockStore((state) => state.salesInvoices);
-    const parties = useMockStore((state) => state.parties);
+    
+    const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: mockApi.getProducts });
+    const { data: salesInvoices = [] } = useQuery({ queryKey: ["salesInvoices"], queryFn: mockApi.getSalesInvoices });
+    const { data: parties = [] } = useQuery({ queryKey: ["parties"], queryFn: mockApi.getParties });
 
     // Calculate Low Stock Alerts
     const lowStockAlerts = products

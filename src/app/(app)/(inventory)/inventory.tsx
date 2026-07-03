@@ -43,7 +43,7 @@ export default function InventoryScreen() {
             />
           </View>
         }
-        renderItem={({ item }) => {
+        renderItem={({ item, index }: { item: any, index: number }) => {
           return (
             <ListCard
               icon={<Package size={20} />}
