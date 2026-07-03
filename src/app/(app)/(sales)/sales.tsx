@@ -21,7 +21,7 @@ export default function SalesScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <StatusBar style="dark" />
       <ScreenHeader title="Sales Documents" subtitle="Manage your outgoing documents" />
       

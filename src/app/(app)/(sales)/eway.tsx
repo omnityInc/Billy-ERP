@@ -24,7 +24,7 @@ export default function EWayScreen() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <StatusBar style="dark" />
       <ScreenHeader title="E-Way Bills & Logistics" subtitle="Manage transport tracking" />
       

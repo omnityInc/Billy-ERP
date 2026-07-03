@@ -21,7 +21,7 @@ export default function PaymentScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <StatusBar style="dark" />
       <ScreenHeader title="Payments" subtitle="Track your cash flow" />
       

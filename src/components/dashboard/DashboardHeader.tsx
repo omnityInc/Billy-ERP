@@ -1,10 +1,12 @@
 import { USER_DATA } from "@/constants/static-data";
 import { getGreeting } from "@/utils/dates";
+import { useRouter } from "expo-router";
 import { Bell, Settings } from "lucide-react-native";
 import { Image, Pressable, Text, View } from "react-native";
 
 export function DashboardHeader() {
   const greeting = getGreeting();
+  const router = useRouter();
 
   return (
     <View className="flex-row items-center justify-between px-4 py-4">
@@ -28,7 +30,10 @@ export function DashboardHeader() {
           <View className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
         </Pressable>
 
-        <Pressable className="p-1">
+        <Pressable
+          className="p-1"
+          onPress={() => router.push("/(app)/(settings)/settings")}
+        >
           <Settings color="#1A1A1A" size={24} />
         </Pressable>
       </View>

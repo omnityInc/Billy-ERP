@@ -5,13 +5,16 @@ import { useRouter } from "expo-router";
 interface Props {
   title: string;
   subtitle: string;
+  onBack?: () => void;
 }
 
-export function ScreenHeader({ title, subtitle }: Props) {
+export function ScreenHeader({ title, subtitle, onBack }: Props) {
   const router = useRouter();
   
   const handleBack = () => {
-    if (router.canGoBack()) {
+    if (onBack) {
+      onBack();
+    } else if (router.canGoBack()) {
       router.back();
     } else {
       router.replace("/");

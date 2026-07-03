@@ -22,7 +22,7 @@ export default function InventoryScreen() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
       <StatusBar style="dark" />
       <ScreenHeader title="Inventory" subtitle="Manage stock and items" />
       
