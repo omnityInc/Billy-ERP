@@ -17,8 +17,11 @@ import {
   ChevronRight
 } from 'lucide-react-native';
 
-const SectionItem = ({ icon: Icon, title, subtitle, isDestructive = false }: any) => (
-  <Pressable className="flex-row items-center py-4 border-b border-natural-100 last:border-b-0">
+const SectionItem = ({ icon: Icon, title, subtitle, isDestructive = false, onPress }: any) => (
+  <Pressable 
+    className="flex-row items-center py-4 border-b border-natural-100 last:border-b-0"
+    onPress={onPress}
+  >
     <View className={`w-10 h-10 rounded-full items-center justify-center mr-4 ${isDestructive ? 'bg-red-50' : 'bg-natural-50'}`}>
       <Icon color={isDestructive ? '#EF4444' : '#1A1A1A'} size={20} />
     </View>
@@ -64,8 +67,18 @@ export default function SettingsScreen() {
         <View className="px-6 mt-6">
           <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mb-2">Account</Text>
           <View className="bg-white">
-            <SectionItem icon={User} title="Edit Profile" subtitle="Change your name, avatar, and contact info" />
-            <SectionItem icon={Store} title="Business Details" subtitle="Update your company name and GSTIN" />
+            <SectionItem 
+              icon={User} 
+              title="Edit Profile" 
+              subtitle="Change your name, avatar, and contact info" 
+              onPress={() => router.push("/(app)/(settings)/edit-profile")}
+            />
+            <SectionItem 
+              icon={Store} 
+              title="Business Details" 
+              subtitle="Update your company name and GSTIN" 
+              onPress={() => router.push("/(app)/(settings)/business-details")}
+            />
           </View>
         </View>
 

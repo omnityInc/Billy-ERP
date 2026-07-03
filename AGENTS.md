@@ -70,7 +70,7 @@ Implement calculations (GST, totals, paise arithmetic), Zod schema validation, a
 
 **Checklist before starting any task:**
 
-1. Read this file.
+1. Read this file and `app-architecture.md`.
 2. Read the files you will modify.
 3. Confirm which phase the task is in.
 4. Keep changes focused and follow existing patterns.
@@ -533,7 +533,7 @@ After completing any task:
 
 Before every implementation:
 
-1. Read this file.
+1. Read this file and `app-architecture.md`.
 2. Read the source files you will modify.
 3. Identify the current phase (Skeleton → Static → Interactive → Data → Logic).
 4. Follow existing patterns.

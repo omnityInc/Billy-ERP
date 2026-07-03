@@ -9,12 +9,14 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { Paise } from "@/utils/format";
 import { StatusBar } from "expo-status-bar";
-import { Search } from "lucide-react-native";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import { Search, CircleAlert, ArrowRight } from "lucide-react-native";
+import { ScrollView, Text, TextInput, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMockStore } from "@/store/mockStore";
+import { useRouter } from "expo-router";
 
 export default function Dashboard() {
+  const router = useRouter();
   const salesInvoices = useMockStore((state) => state.salesInvoices);
   const purchaseInvoices = useMockStore((state) => state.purchaseInvoices);
 
@@ -46,6 +48,21 @@ export default function Dashboard() {
             />
           </View>
         </View>
+
+        {/* Business Profile Alert */}
+        <Pressable 
+          className="mx-4 mb-6 flex-row items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-3 shadow-sm"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+          onPress={() => router.push("/(app)/(settings)/business-details")}
+        >
+          <View className="flex-row items-center flex-1 mr-4">
+            <CircleAlert color="#EF4444" size={20} />
+            <Text className="text-[14px] font-medium text-red-700 ml-3 flex-1" numberOfLines={1}>
+              Setup your business profile
+            </Text>
+          </View>
+          <ArrowRight color="#EF4444" size={20} />
+        </Pressable>
 
         <View className="mb-6">
           <GSTLiabilityCard />
