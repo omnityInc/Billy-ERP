@@ -72,13 +72,13 @@ export function QuickViewModal({
           <View className="flex-row justify-between items-start mb-6">
             <View className="flex-1 mr-4">
               <View className="flex-row items-center gap-x-3">
-                <Text className="text-xl font-bold text-black shrink">
+                <Text className="text-xl font-sans-bold text-black shrink">
                   {title}
                 </Text>
                 {statusText && (
                   <View className={`px-2 py-1 rounded ${style.bg}`}>
                     <Text
-                      className={`text-[10px] font-bold uppercase tracking-wider ${style.text}`}
+                      className={`text-[10px] font-sans-bold uppercase tracking-wider ${style.text}`}
                     >
                       {statusText}
                     </Text>
@@ -104,9 +104,9 @@ export function QuickViewModal({
           {items && items.length > 0 && (
             <Pressable 
               onPress={onViewDetails}
-              className="bg-natural-100 rounded-xl p-4 mb-6 border border-natural-100 active:opacity-70"
+              className="bg-natural-100 rounded-xl p-4 mb-6 border border-natural-100 active:opacity-70 will-change-pressable"
             >
-              <Text className="text-xs font-semibold text-natural-500 uppercase tracking-wider mb-3">
+              <Text className="text-xs font-sans-semibold text-natural-500 uppercase tracking-wider mb-3">
                 Items Summary
               </Text>
               <View className="gap-y-3">
@@ -117,7 +117,7 @@ export function QuickViewModal({
                   >
                     <View className="flex-1 mr-4">
                       <Text
-                        className="text-sm font-medium text-black"
+                        className="text-sm font-sans-medium text-black"
                         numberOfLines={1}
                       >
                         {item.name}
@@ -127,7 +127,7 @@ export function QuickViewModal({
                       </Text>
                     </View>
                     {item.price && (
-                      <Text className="text-sm font-semibold text-black">
+                      <Text className="text-sm font-sans-semibold text-black">
                         {item.price}
                       </Text>
                     )}
@@ -148,7 +148,7 @@ export function QuickViewModal({
               className="w-[48%] flex-row items-center justify-center py-3 bg-[#DCFCE7] rounded-xl border border-[#86EFAC]"
             >
               <Phone size={18} color="#166534" />
-              <Text className="ml-2 font-semibold text-[#166534]">
+              <Text className="ml-2 font-sans-semibold text-[#166534]">
                 Call Party
               </Text>
             </Pressable>
@@ -158,7 +158,7 @@ export function QuickViewModal({
               className="w-[48%] flex-row items-center justify-center py-3 bg-[#DBEAFE] rounded-xl border border-[#93C5FD]"
             >
               <Edit2 size={18} color="#1E40AF" />
-              <Text className="ml-2 font-semibold text-[#1E40AF]">Edit</Text>
+              <Text className="ml-2 font-sans-semibold text-[#1E40AF]">Edit</Text>
             </Pressable>
 
             <Pressable
@@ -166,14 +166,14 @@ export function QuickViewModal({
               className="w-[48%] flex-row items-center justify-center py-3 bg-[#FEF2F2] rounded-xl border border-[#FCA5A5]"
             >
               <Trash2 size={18} color="#EF4444" />
-              <Text className="ml-2 font-semibold text-[#EF4444]">Delete</Text>
+              <Text className="ml-2 font-sans-semibold text-[#EF4444]">Delete</Text>
             </Pressable>
 
             <Pressable
               onPress={onViewDetails}
               className="w-[48%] flex-row items-center justify-center py-3 bg-black rounded-xl"
             >
-              <Text className="mr-2 font-semibold text-white">
+              <Text className="mr-2 font-sans-semibold text-white">
                 Full Details
               </Text>
               <ArrowRight size={18} color="#FFFFFF" />

@@ -84,78 +84,83 @@
 /* Typography Utilities */
 /* STRICT RULE: DO NOT INCLUDE FONT-WEIGHT IN UTILITY CLASSES */
 
-@utility title-huge {
-  font-family: var(--font-sans-semibold);
-  font-size: 28px;
-  line-height: 34px;
-  letter-spacing: -0.5px;
+@utility text-display {
+  font-family: var(--font-sans-extrabold);
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -1.0px;
 }
 
-@utility title-large {
+@utility text-h1 {
+  font-family: var(--font-sans-extrabold);
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.6px;
+}
+
+@utility text-h2 {
   font-family: var(--font-sans-bold);
-  font-size: 22px;
-  line-height: 28px;
-  letter-spacing: -0.5px;
-}
-
-@utility title-medium {
-  font-family: var(--font-sans-semibold);
   font-size: 20px;
   line-height: 28px;
+  letter-spacing: -0.4px;
 }
 
-@utility title-regular {
-  font-family: var(--font-sans-semibold);
-  font-size: 18px;
-  line-height: 26px;
-}
-
-@utility title-small {
-  font-family: var(--font-sans-semibold);
-  font-size: 17px;
+@utility text-h3 {
+  font-family: var(--font-sans-bold);
+  font-size: 16px;
   line-height: 24px;
+  letter-spacing: -0.2px;
 }
 
-@utility body-large-semibold {
+@utility text-body-strong {
   font-family: var(--font-sans-semibold);
   font-size: 15px;
   line-height: 22px;
+  letter-spacing: -0.1px;
 }
 
-@utility body-large {
+@utility text-body {
   font-family: var(--font-sans-regular);
   font-size: 15px;
   line-height: 22px;
 }
 
-@utility body-medium-semibold {
-  font-family: var(--font-sans-semibold);
-  font-size: 13px;
-  line-height: 20px;
-}
-
-@utility body-medium {
+@utility text-label {
   font-family: var(--font-sans-medium);
   font-size: 13px;
-  line-height: 20px;
+  line-height: 18px;
 }
 
-@utility body-medium-regular {
-  font-family: var(--font-sans-regular);
-  font-size: 13px;
-  line-height: 20px;
-}
-
-@utility caption {
+@utility text-caption {
   font-family: var(--font-sans-medium);
   font-size: 12px;
   line-height: 16px;
 }
 
-@utility micro {
-  font-family: var(--font-sans-medium);
+@utility text-micro {
+  font-family: var(--font-sans-semibold);
   font-size: 10px;
   line-height: 14px;
+  letter-spacing: 0.2px;
+}
+
+/* Glassmorphism & Premium Utilities */
+@utility glass {
+  background-color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@utility glass-dark {
+  background-color: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  border-width: 1px;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+@utility premium-shadow {
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08), 0 4px 12px -6px rgba(0, 0, 0, 0.04);
 }
 
 @import "nativewind/theme";

@@ -26,7 +26,7 @@ export function QuickActions() {
               <View className="w-16 h-16 bg-white rounded-[14px] items-center justify-center border border-natural-100 mb-2 shadow">
                 <Icon color="#0F172A" size={24} />
               </View>
-              <Text className="text-xs font-medium text-natural-900 text-center">
+              <Text className="text-xs font-sans-medium text-natural-900 text-center">
                 {action.label}
               </Text>
             </Pressable>

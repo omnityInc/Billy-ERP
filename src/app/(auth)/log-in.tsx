@@ -68,10 +68,10 @@ export default function LogIn() {
                 style={{ width: 64, height: 64, marginBottom: 24 }}
                 resizeMode="contain"
               />
-              <Text className="title-huge text-black mb-2 text-center">
+              <Text className="text-display text-black mb-2 text-center">
                 Welcome to Billy
               </Text>
-              <Text className="body-medium-regular text-natural-500 text-center">
+              <Text className="text-text-caption text-natural-500 text-center">
                 The ultimate ERP for modern business.
               </Text>
             </View>
@@ -137,19 +137,19 @@ export default function LogIn() {
 
             {/* Forgot Password */}
             <View className="items-center mb-10">
-              <Text className="body-medium-regular text-natural-400 mb-1">
+              <Text className="text-text-caption text-natural-400 mb-1">
                 Forgot your password?
               </Text>
               <Pressable>
-                <Text className="body-medium text-black underline">
+                <Text className="text-label text-black underline">
                   Reset your password
                 </Text>
               </Pressable>
 
-              <Text className="body-medium-regular text-natural-400 mt-6">
+              <Text className="text-text-caption text-natural-400 mt-6">
                 Don&apos;t have an account?{" "}
                 <Text
-                  className="body-medium text-black underline"
+                  className="text-label text-black underline"
                   onPress={() => router.push("/(auth)/sign-up")}
                 >
                   Join
@@ -162,7 +162,7 @@ export default function LogIn() {
 
             {/* Footer Terms */}
             <View className="items-center mt-4">
-              <Text className="micro text-natural-500 text-center">
+              <Text className="text-micro text-natural-500 text-center">
                 By logging in you agree to our{" "}
                 <Text className="text-black underline">Terms</Text>,{" "}
                 <Text className="text-black underline">Privacy Policy</Text>,

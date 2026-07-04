@@ -89,7 +89,7 @@ export function ListCard({
   return (
     <Pressable
       onPress={onPress}
-      className={`bg-white rounded-xl pl-6 pr-4 py-4 mb-4 border border-natural-200 shadow-sm mx-4 relative overflow-hidden ${onPress ? "active:opacity-70" : ""}`}
+      className={`bg-white rounded-xl pl-6 pr-4 py-4 mb-4 border border-natural-200 shadow-sm mx-4 relative overflow-hidden ${onPress ? "active:opacity-70 will-change-pressable" : ""}`}
     >
       {/* Visual Indicator */}
       <View
@@ -98,7 +98,7 @@ export function ListCard({
 
       <View className="flex-row justify-between items-start mb-4">
         <View className="flex-1 mr-4">
-          <Text className="text-base font-semibold text-black">{title}</Text>
+          <Text className="text-base font-sans-semibold text-black">{title}</Text>
           {subtitle && (
             <Text className="text-xs text-natural-500 mt-1">{subtitle}</Text>
           )}
@@ -107,7 +107,7 @@ export function ListCard({
           {statusText && (
             <View className={`px-2 py-1 rounded ${style.bg}`}>
               <Text
-                className={`text-[10px] font-bold uppercase tracking-wider ${style.text}`}
+                className={`text-[10px] font-sans-bold uppercase tracking-wider ${style.text}`}
               >
                 {statusText}
               </Text>
@@ -136,7 +136,7 @@ export function ListCard({
                   <Text className="text-sm text-natural-500">{row.label}</Text>
                 </View>
                 <Text
-                  className={`text-sm ${isAmount ? "font-bold text-black text-[15px]" : "font-medium text-black"}`}
+                  className={`text-sm ${isAmount ? "font-sans-bold text-black text-[15px]" : "font-sans-medium text-black"}`}
                 >
                   {displayValue}
                 </Text>

@@ -19,7 +19,7 @@ export function FilterTabs({ tabs, activeTab, onChange }: Props) {
               className={`will-change-variable flex-1 items-center justify-center py-2 rounded-lg ${isActive ? "bg-white shadow-sm" : "bg-transparent"}`}
             >
               <Text
-                className={`will-change-variable text-sm font-medium ${isActive ? "text-black" : "text-natural-500"}`}
+                className={`will-change-variable text-sm font-sans-medium ${isActive ? "text-black" : "text-natural-500"}`}
               >
                 {tab}
               </Text>

@@ -17,7 +17,7 @@ export function DashboardHeader() {
         />
         <View>
           <Text className="text-[13px] text-natural-500">{greeting}</Text>
-          <Text className="text-xl font-semibold text-black">
+          <Text className="text-xl font-sans-semibold text-black">
             {USER_DATA.name}
           </Text>
         </View>

@@ -27,7 +27,7 @@ export function ScreenHeader({ title, subtitle, onBack }: Props) {
         <ArrowLeft color="#1A1A1A" size={24} />
       </Pressable>
       <View>
-        <Text className="text-xl font-semibold text-black">{title}</Text>
+        <Text className="text-xl font-sans-semibold text-black">{title}</Text>
         <Text className="text-[13px] text-natural-500">{subtitle}</Text>
       </View>
     </View>

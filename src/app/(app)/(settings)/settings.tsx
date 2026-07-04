@@ -26,8 +26,8 @@ const SectionItem = ({ icon: Icon, title, subtitle, isDestructive = false, onPre
       <Icon color={isDestructive ? '#EF4444' : '#1A1A1A'} size={20} />
     </View>
     <View className="flex-1">
-      <Text className={`text-base font-medium ${isDestructive ? 'text-red-500' : 'text-black'}`}>{title}</Text>
-      {subtitle && <Text className="text-[13px] text-natural-500 mt-0.5">{subtitle}</Text>}
+      <Text className={`text-body ${isDestructive ? 'text-red-500' : 'text-black'}`}>{title}</Text>
+      {subtitle && <Text className="text-label text-natural-500 mt-0.5">{subtitle}</Text>}
     </View>
     <ChevronRight color="#9CA3AF" size={20} />
   </Pressable>
@@ -54,10 +54,10 @@ export default function SettingsScreen() {
               style={{ width: 64, height: 64, borderRadius: 32 }} 
             />
             <View className="ml-4 flex-1">
-              <Text className="text-xl font-bold text-black">{USER_DATA.name}</Text>
-              <Text className="text-sm text-natural-500 mt-1">user@billyerp.in</Text>
+              <Text className="text-h2 text-black">{USER_DATA.name}</Text>
+              <Text className="text-label text-natural-500 mt-1">user@billyerp.in</Text>
               <View className="bg-natural-100 self-start px-2 py-1 rounded mt-2">
-                <Text className="text-[10px] font-medium text-natural-600 uppercase tracking-wider">Pro Plan</Text>
+                <Text className="text-micro text-natural-600 uppercase tracking-wider">Pro Plan</Text>
               </View>
             </View>
           </View>
@@ -65,7 +65,7 @@ export default function SettingsScreen() {
 
         {/* Account Section */}
         <View className="px-6 mt-6">
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mb-2">Account</Text>
+          <Text className="text-caption text-natural-500 uppercase tracking-wider mb-2">Account</Text>
           <View className="bg-white">
             <SectionItem 
               icon={User} 
@@ -84,7 +84,7 @@ export default function SettingsScreen() {
 
         {/* Preferences Section */}
         <View className="px-6 mt-6">
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mb-2">Preferences</Text>
+          <Text className="text-caption text-natural-500 uppercase tracking-wider mb-2">Preferences</Text>
           <View className="bg-white">
             <SectionItem icon={Bell} title="Notifications" subtitle="Control push and email alerts" />
             <SectionItem icon={Moon} title="Appearance" subtitle="Switch between Light and Dark themes" />
@@ -93,7 +93,7 @@ export default function SettingsScreen() {
 
         {/* Data Section */}
         <View className="px-6 mt-6">
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mb-2">Data</Text>
+          <Text className="text-caption text-natural-500 uppercase tracking-wider mb-2">Data</Text>
           <View className="bg-white">
             <SectionItem icon={CloudUpload} title="Backup to Cloud" subtitle="Safely store your local data online" />
             <SectionItem icon={Download} title="Export Data" subtitle="Download spreadsheets and PDFs" />
@@ -102,7 +102,7 @@ export default function SettingsScreen() {
 
         {/* Danger Zone Section */}
         <View className="px-6 mt-6">
-          <Text className="text-sm font-semibold text-red-400 uppercase tracking-wider mb-2">Danger Zone</Text>
+          <Text className="text-caption text-red-400 uppercase tracking-wider mb-2">Danger Zone</Text>
           <View className="bg-white rounded-xl border border-red-100 overflow-hidden px-4">
             <SectionItem icon={LogOut} title="Log Out" isDestructive />
             <SectionItem icon={Trash2} title="Delete Account" subtitle="Permanently remove your account and data" isDestructive />
@@ -111,7 +111,7 @@ export default function SettingsScreen() {
 
         {/* Copyright Caption */}
         <View className="px-6 mt-12 mb-2 items-center">
-          <Text className="text-[11px] text-natural-400 text-center leading-relaxed font-medium">
+          <Text className="text-caption text-natural-400 text-center leading-relaxed">
             Copyright © 2026{"\n"}
             Billy - Omnity Industries Software{"\n"}
             All rights reserved.

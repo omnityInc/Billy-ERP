@@ -12,11 +12,11 @@ export function GSTLiabilityCard() {
           <View className="w-10 h-10 rounded-full bg-[#EFF6FF] items-center justify-center">
             <ArrowUpRight color="#3B82F6" size={20} />
           </View>
-          <Text className="text-lg font-semibold text-black">
+          <Text className="text-lg font-sans-semibold text-black">
             Est. GST Liability
           </Text>
         </View>
-        <Text className="text-[28px] font-semibold text-[#10B981] tracking-tight">
+        <Text className="text-[28px] font-sans-semibold text-[#10B981] tracking-tight">
           {formatCompactINR(GST_LIABILITY.total)}
         </Text>
       </View>
@@ -27,18 +27,18 @@ export function GSTLiabilityCard() {
       {/* Bottom Row */}
       <View className="flex-row justify-between">
         <View>
-          <Text className="text-[13px] font-medium text-natural-500 mb-1">
+          <Text className="text-[13px] font-sans-medium text-natural-500 mb-1">
             Payable
           </Text>
-          <Text className="text-lg font-semibold text-black">
+          <Text className="text-lg font-sans-semibold text-black">
             {formatCompactINR(GST_LIABILITY.payable)}
           </Text>
         </View>
         <View className="items-end">
-          <Text className="text-[13px] font-medium text-natural-500 mb-1">
+          <Text className="text-[13px] font-sans-medium text-natural-500 mb-1">
             Refund
           </Text>
-          <Text className="text-lg font-semibold text-black">
+          <Text className="text-lg font-sans-semibold text-black">
             {formatCompactINR(GST_LIABILITY.refund)}
           </Text>
         </View>

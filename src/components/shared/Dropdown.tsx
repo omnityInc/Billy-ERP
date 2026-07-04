@@ -78,7 +78,7 @@ export function Dropdown({
             
             <View className="bg-white rounded-t-2xl max-h-[80%]">
               <View className="flex-row items-center justify-between px-6 py-4 border-b border-natural-200">
-                <Text className="text-xl font-semibold text-black">{label || 'Select'}</Text>
+                <Text className="text-xl font-sans-semibold text-black">{label || 'Select'}</Text>
                 <Pressable onPress={() => setModalVisible(false)} className="p-2 -mr-2">
                   <X color="#1A1A1A" size={24} />
                 </Pressable>
@@ -107,7 +107,7 @@ export function Dropdown({
                     onPress={() => handleSelect(item.value)}
                     className={`px-6 py-4 border-b border-natural-100 ${value === item.value ? 'bg-natural-50' : 'bg-white'}`}
                   >
-                    <Text className={`text-sm ${value === item.value ? 'text-black font-semibold' : 'text-natural-700'}`}>
+                    <Text className={`text-sm ${value === item.value ? 'text-black font-sans-semibold' : 'text-natural-700'}`}>
                       {item.label}
                     </Text>
                   </Pressable>

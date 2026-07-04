@@ -107,7 +107,7 @@ export default function SignUp() {
                 style={{ width: 48, height: 48, marginRight: 16 }}
                 resizeMode="contain"
               />
-              <Text className="title-huge text-black flex-1">
+              <Text className="text-display text-black flex-1">
                 Let&apos;s get you started with Billy!
               </Text>
             </View>
@@ -159,7 +159,7 @@ export default function SignUp() {
                     placeholder="Enter your phone number"
                     keyboardType="phone-pad"
                     leftIcon={
-                      <Text className="body-medium-regular text-black ml-1">
+                      <Text className="text-text-caption text-black ml-1">
                         +91
                       </Text>
                     }
@@ -176,7 +176,7 @@ export default function SignUp() {
                 name="gstRegistered"
                 render={({ field: { onChange, value } }) => (
                   <View>
-                    <Text className="body-medium-regular text-black mb-2">
+                    <Text className="text-text-caption text-black mb-2">
                       GST Registered?
                     </Text>
                     <View className="flex-row gap-x-4">
@@ -205,7 +205,7 @@ export default function SignUp() {
                         ) : (
                           <Circle color="#9CA3AF" size={20} />
                         )}
-                        <Text className="body-medium-regular text-black">
+                        <Text className="text-text-caption text-black">
                           Yes
                         </Text>
                       </Pressable>
@@ -236,7 +236,7 @@ export default function SignUp() {
                         ) : (
                           <Circle color="#9CA3AF" size={20} />
                         )}
-                        <Text className="body-medium-regular text-black">
+                        <Text className="text-text-caption text-black">
                           No
                         </Text>
                       </Pressable>
@@ -302,7 +302,7 @@ export default function SignUp() {
             {/* Footer Privacy */}
             <View className="flex-row items-center justify-center gap-x-2">
               <Lock color="#94A3B8" size={14} />
-              <Text className="micro text-natural-500">
+              <Text className="text-micro text-natural-500">
                 We respect your privacy. Your information is safe with us.
               </Text>
             </View>

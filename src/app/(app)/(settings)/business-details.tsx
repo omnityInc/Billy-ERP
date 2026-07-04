@@ -70,7 +70,7 @@ export default function BusinessDetailsScreen() {
       
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         <View className="px-6 mt-6 gap-y-4">
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mb-2">Basic Info</Text>
+          <Text className="text-sm font-sans-semibold text-natural-500 uppercase tracking-wider mb-2">Basic Info</Text>
 
           <Controller
             control={control}
@@ -91,7 +91,7 @@ export default function BusinessDetailsScreen() {
                       }
                     }}
                   >
-                    <Text className={`text-[11px] font-bold tracking-wide ${value ? 'text-white' : 'text-natural-400'}`}>AUTO-FILL</Text>
+                    <Text className={`text-[11px] font-sans-bold tracking-wide ${value ? 'text-white' : 'text-natural-400'}`}>AUTO-FILL</Text>
                   </Pressable>
                 }
                 onBlur={onBlur}
@@ -153,7 +153,7 @@ export default function BusinessDetailsScreen() {
             )}
           />
 
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mt-4 mb-2">Contact Details</Text>
+          <Text className="text-sm font-sans-semibold text-natural-500 uppercase tracking-wider mt-4 mb-2">Contact Details</Text>
 
           <Controller
             control={control}
@@ -225,7 +225,7 @@ export default function BusinessDetailsScreen() {
             )}
           />
 
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mt-4 mb-2">Address Info</Text>
+          <Text className="text-sm font-sans-semibold text-natural-500 uppercase tracking-wider mt-4 mb-2">Address Info</Text>
 
           <Controller
             control={control}
@@ -307,7 +307,7 @@ export default function BusinessDetailsScreen() {
             />
           </View>
 
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mt-4 mb-2">Additional Details</Text>
+          <Text className="text-sm font-sans-semibold text-natural-500 uppercase tracking-wider mt-4 mb-2">Additional Details</Text>
 
           <Controller
             control={control}

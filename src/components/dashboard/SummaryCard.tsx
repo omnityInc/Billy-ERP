@@ -21,10 +21,10 @@ export function SummaryCard({ title, total, gst, trend }: SummaryCardProps) {
         <View className={`w-8 h-8 rounded-full ${iconBg} items-center justify-center`}>
           <Icon color={iconColor} size={16} />
         </View>
-        <Text className="text-[13px] font-semibold text-black">{title}</Text>
+        <Text className="text-[13px] font-sans-semibold text-black">{title}</Text>
       </View>
-      <Text className="text-[22px] font-bold text-black mb-1 tracking-tight">{formatCompactINR(total)}</Text>
-      <Text className="text-xs font-medium text-natural-400">
+      <Text className="text-[22px] font-sans-bold text-black mb-1 tracking-tight">{formatCompactINR(total)}</Text>
+      <Text className="text-xs font-sans-medium text-natural-400">
         +GST {formatCompactINR(gst)}
       </Text>
     </View>

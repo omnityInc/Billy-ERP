@@ -7,21 +7,36 @@ import { FilterTabs } from "@/components/shared/FilterTabs";
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 import { ListCard } from "@/components/shared/ListCard";
 import { QuickViewModal } from "@/components/shared/QuickViewModal";
-import { useMockStore } from "@/store/mockStore";
+import { useQuery } from "@tanstack/react-query";
+import { mockApi } from "@/data/mockApi";
+import { Text } from "react-native";
 import { formatINR } from "@/utils/format";
 import { ReceiptText, Calendar, IndianRupee } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { ListCardSkeleton } from "@/components/shared/Skeleton";
 
 export default function SalesScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("All");
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   
-  const salesInvoices = useMockStore((state) => state.salesInvoices);
-  const parties = useMockStore((state) => state.parties);
+  const { data: salesInvoices = [], isLoading: isLoadingSales, isError: isErrorSales } = useQuery({ queryKey: ["salesInvoices"], queryFn: mockApi.getSalesInvoices });
+  const { data: parties = [], isLoading: isLoadingParties, isError: isErrorParties } = useQuery({ queryKey: ["parties"], queryFn: mockApi.getParties });
 
-  const filteredInvoices = salesInvoices.filter(i => 
+
+
+  if (isErrorSales || isErrorParties) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF", justifyContent: "center", alignItems: "center" }}>
+        <Text className="text-body-strong text-natural-500">Failed to load sales data.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const isLoading = isLoadingSales || isLoadingParties;
+
+  const filteredInvoices = isLoading ? [] : salesInvoices.filter(i => 
     activeTab === "All" ? true : i.status === activeTab.toUpperCase()
   );
 
@@ -31,9 +46,7 @@ export default function SalesScreen() {
       <ScreenHeader title="Sales Documents" subtitle="Manage your outgoing documents" />
       
       <FlashList
-        data={filteredInvoices}
-        // @ts-ignore
-        estimatedItemSize={180}
+        data={isLoading ? [1, 2, 3, 4, 5, 6] as any : filteredInvoices}
         ListHeaderComponent={
           <View>
             <FilterTabs 
@@ -47,21 +60,23 @@ export default function SalesScreen() {
             />
           </View>
         }
-        renderItem={({ item, index }: { item: any, index: number }) => {
-          const party = parties.find(p => p.id === item.partyId);
+        renderItem={({ item, index }) => {
+          if (isLoading) return <ListCardSkeleton />;
+          const invoice = item as any;
+          const party = parties.find(p => p.id === invoice.partyId);
           return (
             <ListCard
               icon={<ReceiptText size={20} />}
               title={party?.companyName || "Unknown Party"}
-              subtitle={`${item.invoiceNo} • ${item.id}`}
-              statusText={item.status}
-              statusVariant={item.status}
+              subtitle={`${invoice.invoiceNo} • ${invoice.id}`}
+              statusText={invoice.status}
+              statusVariant={invoice.status}
               rows={[
-                { label: "Issued Date", value: item.date, icon: <Calendar size={12} color="#64748B" /> },
-                { label: "Due Date", value: item.dueDate, icon: <Calendar size={12} color="#64748B" /> },
-                { label: "Invoice Amount", value: formatINR(item.grandTotalPaise), icon: <IndianRupee size={12} color="#64748B" /> }
+                { label: "Issued Date", value: invoice.date, icon: <Calendar size={12} color="#64748B" /> },
+                { label: "Due Date", value: invoice.dueDate, icon: <Calendar size={12} color="#64748B" /> },
+                { label: "Invoice Amount", value: formatINR(invoice.grandTotalPaise), icon: <IndianRupee size={12} color="#64748B" /> }
               ]}
-              onPress={() => setSelectedItem(item)}
+              onPress={() => setSelectedItem(invoice)}
             />
           );
         }}

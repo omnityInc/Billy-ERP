@@ -62,7 +62,7 @@ export default function EditProfileScreen() {
         </View>
 
         <View className="px-6 mt-6 gap-y-4">
-          <Text className="text-sm font-semibold text-natural-500 uppercase tracking-wider mb-2">Personal Details</Text>
+          <Text className="text-sm font-sans-semibold text-natural-500 uppercase tracking-wider mb-2">Personal Details</Text>
 
           <Controller
             control={control}

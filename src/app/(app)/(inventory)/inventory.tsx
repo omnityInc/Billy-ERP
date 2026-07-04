@@ -6,21 +6,34 @@ import { ScreenHeader } from "@/components/shared/ScreenHeader";
 import { FilterTabs } from "@/components/shared/FilterTabs";
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 import { ListCard } from "@/components/shared/ListCard";
-import { useMockStore } from "@/store/mockStore";
+import { useQuery } from "@tanstack/react-query";
+import { mockApi } from "@/data/mockApi";
+import { Text } from "react-native";
 import { formatINR } from "@/utils/format";
 import { Package, Hash, IndianRupee } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { InventoryQuickViewModal } from "@/components/shared/InventoryQuickViewModal";
+import { ListCardSkeleton } from "@/components/shared/Skeleton";
 
 export default function InventoryScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("All Items");
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const products = useMockStore((state) => state.products);
+  const { data: products = [], isLoading, isError } = useQuery({ queryKey: ["products"], queryFn: mockApi.getProducts });
 
-  const filteredProducts = products.filter(p => {
+
+
+  if (isError) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF", justifyContent: "center", alignItems: "center" }}>
+        <Text className="text-body-strong text-natural-500">Failed to load inventory.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const filteredProducts = isLoading ? [] : products.filter(p => {
     if (activeTab === "Low Stock") return p.availableQty <= p.lowStock && p.availableQty > 0;
     if (activeTab === "Out of Stock") return p.availableQty === 0;
     return true;
@@ -44,9 +57,7 @@ export default function InventoryScreen() {
       <ScreenHeader title="Inventory" subtitle="Manage stock and items" />
       
       <FlashList
-        data={filteredProducts}
-        // @ts-ignore
-        estimatedItemSize={180}
+        data={isLoading ? [1, 2, 3, 4, 5, 6] as any : filteredProducts}
         ListHeaderComponent={
           <View>
             <FilterTabs 
@@ -60,18 +71,20 @@ export default function InventoryScreen() {
             />
           </View>
         }
-        renderItem={({ item, index }: { item: any, index: number }) => {
+        renderItem={({ item, index }) => {
+          if (isLoading) return <ListCardSkeleton />;
+          const product = item as any;
           return (
             <ListCard
-              onPress={() => handleProductPress(item)}
+              onPress={() => handleProductPress(product)}
               icon={<Package size={20} />}
-              title={item.name}
-              subtitle={`Code: ${item.barcode} • HSN: ${item.hsnSac}`}
-              statusText={item.availableQty === 0 ? "OUT OF STOCK" : item.availableQty <= item.lowStock ? "LOW STOCK" : "IN STOCK"}
-              statusVariant={item.availableQty === 0 ? "INACTIVE" : item.availableQty <= item.lowStock ? "PENDING" : "ACTIVE"}
+              title={product.name}
+              subtitle={`Code: ${product.barcode} • HSN: ${product.hsnSac}`}
+              statusText={product.availableQty === 0 ? "OUT OF STOCK" : product.availableQty <= product.lowStock ? "LOW STOCK" : "IN STOCK"}
+              statusVariant={product.availableQty === 0 ? "INACTIVE" : product.availableQty <= product.lowStock ? "PENDING" : "ACTIVE"}
               rows={[
-                { label: "Available Qty", value: `${item.availableQty} ${item.uom}`, icon: <Hash size={12} color="#64748B" /> },
-                { label: "Sell Price", value: formatINR(item.sellPricePaise), icon: <IndianRupee size={12} color="#64748B" /> }
+                { label: "Available Qty", value: `${product.availableQty} ${product.uom}`, icon: <Hash size={12} color="#64748B" /> },
+                { label: "Sell Price", value: formatINR(product.sellPricePaise), icon: <IndianRupee size={12} color="#64748B" /> }
               ]}
             />
           );

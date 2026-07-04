@@ -72,7 +72,7 @@ export default function Onboarding() {
         <View className="px-6 h-10 flex-row justify-end items-center">
           {!isLastSlide && (
             <Pressable onPress={handleSkip} className="p-2">
-              <Text className="body-medium text-natural-800">Skip</Text>
+              <Text className="text-label text-natural-800">Skip</Text>
             </Pressable>
           )}
         </View>
@@ -95,10 +95,10 @@ export default function Onboarding() {
 
               {/* Text Area */}
               <View className="items-center">
-                <Text className="title-huge text-center text-black mb-4">
+                <Text className="text-display text-center text-black mb-4">
                   {item.title}
                 </Text>
-                <Text className="body-medium-regular text-center text-natural-500 mb-8">
+                <Text className="text-text-caption text-center text-natural-500 mb-8">
                   {item.subtitle}
                 </Text>
               </View>

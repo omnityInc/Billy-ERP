@@ -6,22 +6,52 @@ import { ScreenHeader } from "@/components/shared/ScreenHeader";
 import { FilterTabs } from "@/components/shared/FilterTabs";
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 import { ListCard } from "@/components/shared/ListCard";
-import { useMockStore } from "@/store/mockStore";
+import { useQuery } from "@tanstack/react-query";
+import { mockApi } from "@/data/mockApi";
+import { Text } from "react-native";
 import { formatINR } from "@/utils/format";
 import { Truck, Navigation, IndianRupee, Calendar } from "lucide-react-native";
 import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
+import { EWayQuickViewModal } from "@/components/shared/EWayQuickViewModal";
+import { ListCardSkeleton } from "@/components/shared/Skeleton";
 
 export default function EWayScreen() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("All");
-  const lorryReceipts = useMockStore((state) => state.lorryReceipts);
+  const [selectedLR, setSelectedLR] = useState<any>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { data: lorryReceipts = [], isLoading, isError } = useQuery({ queryKey: ["lorryReceipts"], queryFn: mockApi.getEwayBills });
 
-  const filteredReceipts = lorryReceipts.filter((lr, idx) => {
+
+
+  if (isError) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF", justifyContent: "center", alignItems: "center" }}>
+        <Text className="text-body-strong text-natural-500">Failed to load E-Way bills.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const filteredReceipts = isLoading ? [] : lorryReceipts.filter((lr) => {
     if (activeTab === "All") return true;
-    if (activeTab === "Generated") return idx % 3 === 0;
-    if (activeTab === "Pending") return idx % 3 === 1;
-    if (activeTab === "Cancelled") return idx % 3 === 2;
+    if (activeTab === "Generated") return lr.status === "GENERATED";
+    if (activeTab === "Pending") return lr.status === "PENDING";
+    if (activeTab === "Cancelled") return lr.status === "CANCELLED";
     return true;
   });
+
+  const handleLRPress = (lr: any) => {
+    setSelectedLR(lr);
+    setIsModalVisible(true);
+  };
+
+  const handleViewDetails = () => {
+    setIsModalVisible(false);
+    if (selectedLR) {
+      router.push(`/eway/${selectedLR.id}` as any);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
@@ -29,9 +59,7 @@ export default function EWayScreen() {
       <ScreenHeader title="E-Way Bills & Logistics" subtitle="Manage transport tracking" />
       
       <FlashList
-        data={filteredReceipts}
-        // @ts-ignore
-        estimatedItemSize={180}
+        data={isLoading ? [1, 2, 3, 4, 5, 6] as any : filteredReceipts}
         ListHeaderComponent={
           <View>
             <FilterTabs 
@@ -45,23 +73,32 @@ export default function EWayScreen() {
             />
           </View>
         }
-        renderItem={({ item, index }: { item: any, index: number }) => {
-          const status = index % 3 === 0 ? "GENERATED" : index % 3 === 1 ? "PENDING" : "CANCELLED";
-          const variant = index % 3 === 0 ? "ACTIVE" : index % 3 === 1 ? "PENDING" : "INACTIVE";
+        renderItem={({ item }) => {
+          if (isLoading) return <ListCardSkeleton />;
+          const lr = item as any;
+          const variant = lr.status === "GENERATED" ? "ACTIVE" : lr.status === "PENDING" ? "PENDING" : "INACTIVE";
           return (
             <ListCard
+              onPress={() => handleLRPress(lr)}
               icon={<Truck size={20} />}
-              title={item.transporter}
-              subtitle={`LR No: ${item.lrNo} • Vehicle: ${item.vehicleNo}`}
-              statusText={status}
+              title={lr.transporter}
+              subtitle={`LR No: ${lr.lrNo} • Vehicle: ${lr.vehicleNo}`}
+              statusText={lr.status}
               statusVariant={variant as any}
               rows={[
-                { label: "Route", value: `${item.from} to ${item.to}`, icon: <Navigation size={12} color="#64748B" /> },
-                { label: "Freight", value: formatINR(item.freightPaise), icon: <IndianRupee size={12} color="#64748B" /> }
+                { label: "Route", value: `${lr.from} to ${lr.to}`, icon: <Navigation size={12} color="#64748B" /> },
+                { label: "Freight", value: formatINR(lr.freightPaise), icon: <IndianRupee size={12} color="#64748B" /> }
               ]}
             />
           );
         }}
+      />
+
+      <EWayQuickViewModal
+        lr={selectedLR}
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onViewDetails={handleViewDetails}
       />
     </SafeAreaView>
   );

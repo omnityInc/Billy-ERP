@@ -1,7 +1,10 @@
 import { RecordPaymentModal } from "@/components/shared/RecordPaymentModal";
-import { useMockStore } from "@/store/mockStore";
+import { useQuery } from "@tanstack/react-query";
+import { mockApi } from "@/data/mockApi";
+import { Skeleton } from "@/components/shared/Skeleton";
 import { formatINR } from "@/utils/format";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import type { Paise } from "@/data/mock";
 import { StatusBar } from "expo-status-bar";
 import {
   ArrowLeft,
@@ -26,30 +29,108 @@ export default function InvoiceDetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
 
-  // 1. Fetch data from mock store
-  const salesInvoices = useMockStore((state) => state.salesInvoices);
-  const purchaseInvoices = useMockStore((state) => state.purchaseInvoices);
-  const parties = useMockStore((state) => state.parties);
-  const products = useMockStore((state) => state.products);
-  const payments = useMockStore((state) => state.payments);
-
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
 
-  // Search across both sales and purchases to find the invoice
-  const invoice =
-    salesInvoices.find((i) => i.id === id) ||
-    purchaseInvoices.find((i) => i.id === id);
-  const party = invoice ? parties.find((p) => p.id === invoice.partyId) : null;
+  const { data: invoice, isLoading: isLoadingInvoice, isError: isErrorInvoice } = useQuery({ 
+    queryKey: ["invoice", id], 
+    queryFn: () => mockApi.getInvoiceById(id as string) 
+  });
+
+  const { data: party, isLoading: isLoadingParty, isError: isErrorParty } = useQuery({ 
+    queryKey: ["party", invoice?.partyId], 
+    queryFn: () => mockApi.getPartyById(invoice?.partyId as string),
+    enabled: !!invoice?.partyId
+  });
+
+  const { data: products = [], isLoading: isLoadingProducts } = useQuery({ queryKey: ["products"], queryFn: mockApi.getProducts });
+  const { data: payments = [], isLoading: isLoadingPayments } = useQuery({ queryKey: ["payments"], queryFn: mockApi.getPayments });
+
+  if (isLoadingInvoice || isLoadingParty || isLoadingProducts || isLoadingPayments) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#F8FAFC" }} edges={["top"]}>
+        <StatusBar style="dark" />
+        <View className="flex-row items-center justify-between px-4 py-4 bg-white border-b border-natural-200">
+          <View className="flex-row items-center flex-1">
+            <Pressable onPress={() => router.back()} className="mr-3 p-1">
+              <ArrowLeft size={24} color="#0F172A" />
+            </Pressable>
+            <View>
+              <Skeleton height={28} width={100} className="mb-1" />
+              <Text className="text-caption text-natural-500">Invoice Details</Text>
+            </View>
+          </View>
+          <View className="flex-row gap-x-4">
+            <Share2 size={20} color="#94A3B8" />
+            <Download size={20} color="#94A3B8" />
+          </View>
+        </View>
+        <ScrollView className="flex-1 px-4 pt-4">
+          <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
+            <View className="flex-row justify-between items-start mb-6">
+              <View>
+                <Text className="text-body-strong text-natural-500 mb-1 tracking-wider uppercase">Invoice Amount</Text>
+                <Skeleton height={36} width={140} />
+              </View>
+              <Skeleton height={24} width={70} borderRadius={12} />
+            </View>
+            <View className="flex-row justify-between pt-4 border-t border-natural-100">
+              <View>
+                <Text className="text-caption text-natural-500 mb-0.5">DATE</Text>
+                <Skeleton height={20} width={90} />
+              </View>
+              <View className="items-end">
+                <Text className="text-caption text-natural-500 mb-0.5">DUE DATE</Text>
+                <Skeleton height={20} width={90} />
+              </View>
+            </View>
+          </View>
+          <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
+            <View className="flex-row justify-between items-start mb-3">
+              <Text className="text-caption text-natural-500 tracking-wider uppercase">Bill To</Text>
+              <Skeleton height={32} width={32} borderRadius={16} className="-mt-2 -mr-2" />
+            </View>
+            <Skeleton height={24} width={180} className="mb-2" />
+            <Skeleton height={16} width={120} />
+          </View>
+          <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
+            <Text className="text-caption text-natural-500 mb-3 tracking-wider uppercase">Items</Text>
+            <View className="flex-row justify-between mb-4">
+              <View>
+                <Skeleton height={20} width={140} className="mb-2" />
+                <Skeleton height={16} width={80} />
+              </View>
+              <Skeleton height={20} width={60} />
+            </View>
+            <View className="flex-row justify-between">
+              <View>
+                <Skeleton height={20} width={160} className="mb-2" />
+                <Skeleton height={16} width={90} />
+              </View>
+              <Skeleton height={20} width={70} />
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  if (isErrorInvoice || isErrorParty) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#F8FAFC", justifyContent: "center", alignItems: "center" }}>
+        <Text className="text-body-strong text-natural-500">Failed to load invoice details.</Text>
+      </SafeAreaView>
+    );
+  }
 
   if (!invoice || !party) {
     return (
       <SafeAreaView className="flex-1 bg-natural-50 justify-center items-center">
-        <Text className="text-natural-500 font-medium">Invoice not found</Text>
+        <Text className="text-natural-500">Invoice not found</Text>
         <Pressable
           onPress={() => router.back()}
           className="mt-4 px-4 py-2 bg-black rounded-lg"
         >
-          <Text className="text-white font-bold">Go Back</Text>
+          <Text className="text-white">Go Back</Text>
         </Pressable>
       </SafeAreaView>
     );
@@ -74,7 +155,7 @@ export default function InvoiceDetailsScreen() {
   // Calculate Outstanding Balance
   const invoicePayments = payments.filter((p) => p.invoiceId === invoice.id);
   const totalPaid = invoicePayments.reduce((sum, p) => sum + p.amountPaise, 0);
-  const outstandingAmountPaise = invoice.grandTotalPaise - totalPaid;
+  const outstandingAmountPaise = (invoice.grandTotalPaise - totalPaid) as Paise;
 
   // Check if any item has discount to conditionally show column
   const hasDiscount = invoice.items.some((item) => item.discountPercent > 0);
@@ -102,10 +183,10 @@ export default function InvoiceDetailsScreen() {
             <ArrowLeft size={24} color="#0F172A" />
           </Pressable>
           <View>
-            <Text className="text-lg font-bold text-black">
+            <Text className="text-h3 text-black">
               {invoice.invoiceNo}
             </Text>
-            <Text className="text-xs text-natural-500 font-medium">
+            <Text className="text-caption text-natural-500">
               Invoice Details
             </Text>
           </View>
@@ -128,16 +209,16 @@ export default function InvoiceDetailsScreen() {
         <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
           <View className="flex-row justify-between items-start mb-6">
             <View>
-              <Text className="text-sm font-semibold text-natural-500 mb-1 tracking-wider uppercase">
+              <Text className="text-body-strong text-natural-500 mb-1 tracking-wider uppercase">
                 Invoice Amount
               </Text>
-              <Text className="text-3xl font-bold text-black">
+              <Text className="text-h1 text-black">
                 {formatINR(invoice.grandTotalPaise)}
               </Text>
             </View>
             <View className={`px-3 py-1.5 rounded-full ${statusStyle.bg}`}>
               <Text
-                className={`text-xs font-bold uppercase tracking-wider ${statusStyle.text}`}
+                className={`text-xs font-sans-bold uppercase tracking-wider ${statusStyle.text}`}
               >
                 {invoice.status}
               </Text>
@@ -145,18 +226,18 @@ export default function InvoiceDetailsScreen() {
           </View>
           <View className="flex-row justify-between pt-4 border-t border-natural-100">
             <View>
-              <Text className="text-xs text-natural-500 mb-0.5 font-medium">
+              <Text className="text-caption text-natural-500 mb-0.5">
                 DATE
               </Text>
-              <Text className="text-sm font-bold text-black">
+              <Text className="text-body-strong text-black">
                 {invoice.date}
               </Text>
             </View>
             <View className="items-end">
-              <Text className="text-xs text-natural-500 mb-0.5 font-medium">
+              <Text className="text-caption text-natural-500 mb-0.5">
                 DUE DATE
               </Text>
-              <Text className="text-sm font-bold text-black">
+              <Text className="text-body-strong text-black">
                 {invoice.dueDate}
               </Text>
             </View>
@@ -166,7 +247,7 @@ export default function InvoiceDetailsScreen() {
         {/* CARD 2: BILL TO */}
         <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
           <View className="flex-row justify-between items-start mb-3">
-            <Text className="text-xs font-semibold text-natural-500 tracking-wider uppercase">
+            <Text className="text-caption text-natural-500 tracking-wider uppercase">
               Bill To
             </Text>
             <Pressable
@@ -178,23 +259,23 @@ export default function InvoiceDetailsScreen() {
               <Phone size={16} color="#1E40AF" />
             </Pressable>
           </View>
-          <Text className="text-lg font-bold text-black mb-1">
+          <Text className="text-h3 text-black mb-1">
             {party.companyName}
           </Text>
-          <Text className="text-sm text-natural-600 mb-2 leading-5">
+          <Text className="text-body text-natural-600 mb-2 leading-5">
             {party.billingAddress}, {party.city}, {party.state} -{" "}
             {party.pincode}
           </Text>
           <View className="flex-row justify-between items-center bg-natural-50 p-3 rounded-lg border border-natural-100">
             <View>
-              <Text className="text-xs text-natural-500 mb-0.5">GSTIN</Text>
-              <Text className="text-sm font-bold text-black">
+              <Text className="text-caption text-natural-500 mb-0.5">GSTIN</Text>
+              <Text className="text-body-strong text-black">
                 {party.gstin}
               </Text>
             </View>
             <View className="items-end">
-              <Text className="text-xs text-natural-500 mb-0.5">Phone</Text>
-              <Text className="text-sm font-bold text-black">
+              <Text className="text-caption text-natural-500 mb-0.5">Phone</Text>
+              <Text className="text-body-strong text-black">
                 {party.phone}
               </Text>
             </View>
@@ -203,7 +284,7 @@ export default function InvoiceDetailsScreen() {
 
         {/* CARD 3: LINE ITEMS (Horizontal Scrollable Table) */}
         <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
-          <Text className="text-xs font-semibold text-natural-500 mb-3 tracking-wider uppercase">
+          <Text className="text-caption text-natural-500 mb-3 tracking-wider uppercase">
             Line Items
           </Text>
           <ScrollView
@@ -214,27 +295,27 @@ export default function InvoiceDetailsScreen() {
             <View>
               {/* Table Header */}
               <View className="flex-row border-b border-natural-200 pb-2 mb-2">
-                <Text className="text-xs font-bold text-natural-500 w-8">
+                <Text className="text-caption text-natural-500 w-8">
                   #
                 </Text>
-                <Text className="text-xs font-bold text-natural-500 w-32">
+                <Text className="text-caption text-natural-500 w-32">
                   Description
                 </Text>
-                <Text className="text-xs font-bold text-natural-500 w-24">
+                <Text className="text-caption text-natural-500 w-24">
                   HSN/SAC
                 </Text>
-                <Text className="text-xs font-bold text-natural-500 w-16 text-right">
+                <Text className="text-caption text-natural-500 w-16 text-right">
                   Qty
                 </Text>
-                <Text className="text-xs font-bold text-natural-500 w-24 text-right">
+                <Text className="text-caption text-natural-500 w-24 text-right">
                   Rate
                 </Text>
                 {hasDiscount && (
-                  <Text className="text-xs font-bold text-natural-500 w-16 text-right">
+                  <Text className="text-caption text-natural-500 w-16 text-right">
                     Disc %
                   </Text>
                 )}
-                <Text className="text-xs font-bold text-natural-500 w-24 text-right">
+                <Text className="text-caption text-natural-500 w-24 text-right">
                   Amount
                 </Text>
               </View>
@@ -245,30 +326,30 @@ export default function InvoiceDetailsScreen() {
                   key={item.id}
                   className="flex-row py-2 border-b border-natural-100"
                 >
-                  <Text className="text-xs font-medium text-black w-8">
+                  <Text className="text-caption text-black w-8">
                     {index + 1}
                   </Text>
                   <Text
-                    className="text-xs font-medium text-black w-32"
+                    className="text-caption text-black w-32"
                     numberOfLines={2}
                   >
                     {item.productName}
                   </Text>
-                  <Text className="text-xs text-natural-600 w-24">
+                  <Text className="text-caption text-natural-600 w-24">
                     {item.hsnSac}
                   </Text>
-                  <Text className="text-xs font-medium text-black w-16 text-right">
+                  <Text className="text-caption text-black w-16 text-right">
                     {item.qty} {item.uom}
                   </Text>
-                  <Text className="text-xs font-medium text-black w-24 text-right">
+                  <Text className="text-caption text-black w-24 text-right">
                     {formatINR(item.ratePaise)}
                   </Text>
                   {hasDiscount && (
-                    <Text className="text-xs text-natural-600 w-16 text-right">
+                    <Text className="text-caption text-natural-600 w-16 text-right">
                       {item.discountPercent}%
                     </Text>
                   )}
-                  <Text className="text-xs font-bold text-black w-24 text-right">
+                  <Text className="text-caption text-black w-24 text-right">
                     {formatINR(item.totalPaise)}
                   </Text>
                 </View>
@@ -277,24 +358,24 @@ export default function InvoiceDetailsScreen() {
               {/* Table Totals */}
               <View className="flex-row py-3 mt-1">
                 <View className="flex-1 mr-4">
-                  <Text className="text-xs font-bold text-natural-500 text-right">
+                  <Text className="text-caption text-natural-500 text-right">
                     Subtotal:
                   </Text>
-                  <Text className="text-xs font-bold text-natural-500 text-right mt-1">
+                  <Text className="text-caption text-natural-500 text-right mt-1">
                     Tax Amount:
                   </Text>
-                  <Text className="text-sm font-bold text-black text-right mt-2">
+                  <Text className="text-body-strong text-black text-right mt-2">
                     Grand Total:
                   </Text>
                 </View>
                 <View className="w-24">
-                  <Text className="text-xs font-bold text-black text-right">
+                  <Text className="text-caption text-black text-right">
                     {formatINR(invoice.taxableAmountPaise)}
                   </Text>
-                  <Text className="text-xs font-bold text-black text-right mt-1">
+                  <Text className="text-caption text-black text-right mt-1">
                     {formatINR(invoice.taxAmountPaise)}
                   </Text>
-                  <Text className="text-sm font-bold text-black text-right mt-2">
+                  <Text className="text-body-strong text-black text-right mt-2">
                     {formatINR(invoice.grandTotalPaise)}
                   </Text>
                 </View>
@@ -307,10 +388,10 @@ export default function InvoiceDetailsScreen() {
         <View className="bg-white rounded-2xl p-6 mb-8 border border-natural-200 shadow-sm items-center">
           {outstandingAmountPaise > 0 ? (
             <>
-              <Text className="text-lg font-bold text-black mb-1">
+              <Text className="text-h3 text-black mb-1">
                 Scan & Pay via UPI
               </Text>
-              <Text className="text-sm text-natural-500 mb-6 text-center">
+              <Text className="text-body text-natural-500 mb-6 text-center">
                 Use any UPI app like GPay, PhonePe, or Paytm to pay this invoice
                 instantly.
               </Text>
@@ -322,16 +403,16 @@ export default function InvoiceDetailsScreen() {
                   backgroundColor="#FFFFFF"
                 />
               </View>
-              <Text className="text-xs font-bold text-natural-500 tracking-wider">
+              <Text className="text-caption text-natural-500 tracking-wider">
                 UPI ID: merchant@upi
               </Text>
             </>
           ) : (
             <View className="p-6 bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl w-full items-center">
-              <Text className="text-[#166534] font-bold text-lg mb-1">
+              <Text className="text-[#166534] text-h3 mb-1">
                 Fully Paid!
               </Text>
-              <Text className="text-[#15803D] text-sm text-center">
+              <Text className="text-[#15803D] text-body text-center">
                 There is no outstanding balance for this invoice.
               </Text>
             </View>
@@ -348,11 +429,11 @@ export default function InvoiceDetailsScreen() {
           onPress={() => setIsPaymentModalVisible(true)}
           className="flex-1 flex-row items-center justify-center py-4 bg-[#DCFCE7] border border-[#86EFAC] rounded-xl shadow-sm"
         >
-          <Text className="font-bold text-[#166534]">Record Payment</Text>
+          <Text className="text-[#166534]">Record Payment</Text>
         </Pressable>
         <Pressable className="flex-1 flex-row items-center justify-center py-4 bg-black border border-natural-300 rounded-xl">
           <Printer size={18} color="#ffffff" />
-          <Text className="ml-2 font-bold text-white">Download PDF</Text>
+          <Text className="ml-2 text-white">Download PDF</Text>
         </Pressable>
       </View>
 

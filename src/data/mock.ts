@@ -112,6 +112,7 @@ export interface LorryReceipt {
   to: string;
   freightPaise: Paise;
   weight: number;
+  status: "GENERATED" | "PENDING" | "CANCELLED";
 }
 
 const random = (min: number, max: number) =>
@@ -518,5 +519,6 @@ for (let i = 1; i <= 200; i++) {
     to: "Mumbai",
     freightPaise: toPaise(random(500, 5000)),
     weight: random(100, 5000),
+    status: pick(["GENERATED", "PENDING", "CANCELLED"]),
   });
 }

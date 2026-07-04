@@ -39,15 +39,15 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <View className="flex-1 justify-center items-center p-6 bg-natural-50">
           <AlertTriangle color="#EF4444" size={48} />
-          <Text className="title-medium text-natural-900 mt-4 mb-2">Something went wrong</Text>
-          <Text className="body-medium-regular text-natural-500 text-center mb-6">
+          <Text className="text-h2 text-natural-900 mt-4 mb-2">Something went wrong</Text>
+          <Text className="text-text-caption text-natural-500 text-center mb-6">
             {this.state.error?.message || "An unexpected error occurred."}
           </Text>
           <TouchableOpacity
             style={styles.button}
             onPress={this.handleReset}
           >
-            <Text className="body-medium-semibold text-white">Try Again</Text>
+            <Text className="text-label text-white">Try Again</Text>
           </TouchableOpacity>
         </View>
       );

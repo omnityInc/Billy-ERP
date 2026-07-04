@@ -22,8 +22,8 @@ export function OutstandingSection({ title, totalLabel, totalAmount, data }: Out
   
   return (
     <View className="mb-8 px-4">
-      <Text className="text-[22px] font-semibold text-black mb-1 leading-tight">{title}</Text>
-      <Text className="text-[15px] font-medium text-natural-700 mb-4">{totalLabel}: {formatINR(totalAmount)}</Text>
+      <Text className="text-[22px] font-sans-semibold text-black mb-1 leading-tight">{title}</Text>
+      <Text className="text-[15px] font-sans-medium text-natural-700 mb-4">{totalLabel}: {formatINR(totalAmount)}</Text>
       
       {/* Progress Bar */}
       <View className="h-3 rounded-full flex-row overflow-hidden mb-6">
@@ -50,9 +50,9 @@ export function OutstandingSection({ title, totalLabel, totalAmount, data }: Out
                 className="w-3.5 h-3.5 rounded-full mr-2" 
                 style={{ backgroundColor: item.color }} 
               />
-              <Text className="text-[11px] font-semibold text-natural-700 tracking-wider uppercase">{item.label}</Text>
+              <Text className="text-[11px] font-sans-semibold text-natural-700 tracking-wider uppercase">{item.label}</Text>
             </View>
-            <Text className="text-sm font-semibold text-black">{formatINR(item.amount)}</Text>
+            <Text className="text-sm font-sans-semibold text-black">{formatINR(item.amount)}</Text>
           </View>
         ))}
       </View>

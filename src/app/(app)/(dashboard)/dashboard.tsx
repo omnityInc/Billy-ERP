@@ -10,8 +10,9 @@ import { SummaryCard } from "@/components/dashboard/SummaryCard";
 import { Paise } from "@/utils/format";
 import { StatusBar } from "expo-status-bar";
 import { Search, CircleAlert, ArrowRight } from "lucide-react-native";
-import { ActivityIndicator, ScrollView, Text, TextInput, View, Pressable } from "react-native";
+import { ScrollView, Text, TextInput, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GSTLiabilityCardSkeleton, SummaryCardSkeleton } from "@/components/shared/Skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { mockApi } from "@/data/mockApi";
 import { useRouter } from "expo-router";
@@ -29,27 +30,21 @@ export default function Dashboard() {
     queryFn: mockApi.getPurchaseInvoices,
   });
 
-  if (isSalesLoading || isPurchaseLoading) {
+  const isLoading = isSalesLoading || isPurchaseLoading;
+
+  if (isSalesError || isPurchaseError) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF", justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#3B82F6" />
+        <Text className="text-label text-natural-500">Error loading dashboard data.</Text>
       </SafeAreaView>
     );
   }
 
-  if (isSalesError || isPurchaseError || !salesInvoices || !purchaseInvoices) {
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "#EEF2FF", justifyContent: "center", alignItems: "center" }}>
-        <Text className="body-medium text-natural-500">Error loading dashboard data.</Text>
-      </SafeAreaView>
-    );
-  }
+  const totalSales = (salesInvoices?.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) || 0) as Paise;
+  const totalSalesGst = (salesInvoices?.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) || 0) as Paise;
 
-  const totalSales = salesInvoices.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) as Paise;
-  const totalSalesGst = salesInvoices.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) as Paise;
-
-  const totalPurchase = purchaseInvoices.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) as Paise;
-  const totalPurchaseGst = purchaseInvoices.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) as Paise;
+  const totalPurchase = (purchaseInvoices?.reduce((acc, inv) => acc + inv.taxableAmountPaise, 0) || 0) as Paise;
+  const totalPurchaseGst = (purchaseInvoices?.reduce((acc, inv) => acc + inv.taxAmountPaise, 0) || 0) as Paise;
 
   return (
     <SafeAreaView
@@ -76,13 +71,13 @@ export default function Dashboard() {
 
         {/* Business Profile Alert */}
         <Pressable 
-          className="mx-4 mb-6 flex-row items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-3 shadow-sm"
+          className="mx-4 mb-4 flex-row items-center justify-between bg-red-50 border border-red-200 rounded-xl px-4 py-3 shadow-sm"
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
           onPress={() => router.push("/(app)/(settings)/business-details")}
         >
           <View className="flex-row items-center flex-1 mr-4">
             <CircleAlert color="#EF4444" size={20} />
-            <Text className="text-[14px] font-medium text-red-700 ml-3 flex-1" numberOfLines={1}>
+            <Text className="text-[14px] font-sans-medium text-red-700 ml-3 flex-1" numberOfLines={1}>
               Setup your business profile
             </Text>
           </View>
@@ -90,24 +85,33 @@ export default function Dashboard() {
         </Pressable>
 
         <View className="mb-6">
-          <GSTLiabilityCard />
+          {isLoading ? <GSTLiabilityCardSkeleton /> : <GSTLiabilityCard />}
         </View>
 
         <QuickActions />
 
         <View className="flex-row gap-x-4 px-4">
-          <SummaryCard
-            title="Sales"
-            total={totalSales}
-            gst={totalSalesGst}
-            trend="down"
-          />
-          <SummaryCard
-            title="Purchase"
-            total={totalPurchase}
-            gst={totalPurchaseGst}
-            trend="up"
-          />
+          {isLoading ? (
+            <>
+              <SummaryCardSkeleton />
+              <SummaryCardSkeleton />
+            </>
+          ) : (
+            <>
+              <SummaryCard
+                title="Sales"
+                total={totalSales}
+                gst={totalSalesGst}
+                trend="down"
+              />
+              <SummaryCard
+                title="Purchase"
+                total={totalPurchase}
+                gst={totalPurchaseGst}
+                trend="up"
+              />
+            </>
+          )}
         </View>
 
         <NeedsAttentionSection />
@@ -180,7 +184,7 @@ export default function Dashboard() {
         <InventoryMoversSection />
 
         <View className="items-center mt-2 pb-4">
-          <Text className="text-[10px] font-medium text-natural-400">
+          <Text className="text-[10px] font-sans-medium text-natural-400">
             © 2026 Billy. Built with care. Protected by copyright.
           </Text>
         </View>

@@ -1,5 +1,5 @@
 import { Modal, Pressable, Text, View } from "react-native";
-import { X, Package, Box, Hash, IndianRupee, TrendingUp, TrendingDown } from "lucide-react-native";
+import { X, Package, Box, Hash, IndianRupee, TrendingUp, TrendingDown, ArrowRight } from "lucide-react-native";
 import { formatINR } from "@/utils/format";
 import type { Product, Paise } from "@/data/mock";
 
@@ -34,7 +34,7 @@ export function InventoryQuickViewModal({
     <Modal
       visible={visible}
       transparent
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
       statusBarTranslucent
     >
@@ -47,44 +47,46 @@ export function InventoryQuickViewModal({
         <View className="bg-white rounded-t-3xl p-6 pb-8">
           {/* HEADER */}
           <View className="flex-row justify-between items-start mb-6">
-            <View className="flex-row items-center flex-1 pr-4">
+            <View className="flex-row flex-1 pr-4">
               <View className="w-12 h-12 rounded-full bg-natural-100 items-center justify-center mr-4">
                 <Package size={24} color="#0F172A" />
               </View>
               <View className="flex-1">
-                <Text className="text-xl font-bold text-black" numberOfLines={1}>
-                  {product.name}
-                </Text>
-                <View className="flex-row items-center mt-1">
-                  <View className={`px-2 py-0.5 rounded ${status.bg} mr-2`}>
-                    <Text className={`text-[10px] font-bold tracking-wider ${status.text}`}>
+                <View className="flex-row items-center gap-x-3">
+                  <Text className="text-xl font-sans-bold text-black shrink" numberOfLines={1}>
+                    {product.name}
+                  </Text>
+                  <View className={`px-2 py-1 rounded ${status.bg}`}>
+                    <Text className={`text-[10px] font-sans-bold tracking-wider ${status.text}`}>
                       {status.label}
                     </Text>
                   </View>
-                  <Text className="text-xs text-natural-500">
-                    {product.group}
-                  </Text>
                 </View>
+                <Text className="text-sm text-natural-500 mt-1">
+                  {product.group}
+                </Text>
               </View>
             </View>
-            <Pressable onPress={onClose} className="p-2 bg-natural-100 rounded-full">
-              <X size={20} color="#64748B" />
-            </Pressable>
+            <View className="items-end">
+              <Pressable onPress={onClose} className="p-1 bg-natural-100 rounded-full">
+                <X size={20} color="#64748B" />
+              </Pressable>
+            </View>
           </View>
 
           {/* STOCK SNAPSHOT */}
           <View className="bg-natural-50 rounded-xl p-4 mb-4 border border-natural-200 flex-row items-center justify-between">
             <View>
-              <Text className="text-xs font-semibold text-natural-500 uppercase tracking-wider mb-1">
+              <Text className="text-xs font-sans-semibold text-natural-500 uppercase tracking-wider mb-1">
                 Available Stock
               </Text>
-              <Text className={`text-2xl font-bold ${isOutOfStock ? "text-red-600" : "text-black"}`}>
-                {product.availableQty} <Text className="text-base text-natural-500 font-medium">{product.uom}</Text>
+              <Text className={`text-h2 ${isOutOfStock ? "text-red-600" : "text-black"}`}>
+                {product.availableQty} <Text className="text-sm font-sans-regular text-natural-500">{product.uom}</Text>
               </Text>
             </View>
             <View className="items-end">
               <Text className="text-xs text-natural-500 mb-1">Low Stock Alert at</Text>
-              <Text className="text-sm font-semibold text-natural-700">{product.lowStock} {product.uom}</Text>
+              <Text className="text-sm font-sans-semibold text-natural-700">{product.lowStock} {product.uom}</Text>
             </View>
           </View>
 
@@ -93,18 +95,18 @@ export function InventoryQuickViewModal({
             <View className="flex-1 bg-white border border-natural-200 rounded-xl p-4 shadow-sm">
               <View className="flex-row items-center mb-2 gap-x-3">
                 <TrendingUp size={16} color="#166534" />
-                <Text className="text-xs font-medium text-natural-500">Sell Price</Text>
+                <Text className="text-xs font-sans-medium text-natural-500">Sell Price</Text>
               </View>
-              <Text className="text-lg font-bold text-black">
+              <Text className="text-lg font-sans-bold text-black">
                 {formatINR(product.sellPricePaise)}
               </Text>
             </View>
             <View className="flex-1 bg-white border border-natural-200 rounded-xl p-4 shadow-sm">
               <View className="flex-row items-center mb-2 gap-x-3">
                 <TrendingDown size={16} color="#991B1B" />
-                <Text className="text-xs font-medium text-natural-500">Purchase Price</Text>
+                <Text className="text-xs font-sans-medium text-natural-500">Purchase Price</Text>
               </View>
-              <Text className="text-lg font-bold text-black">
+              <Text className="text-lg font-sans-bold text-black">
                 {formatINR(product.purchasePricePaise)}
               </Text>
             </View>
@@ -114,9 +116,10 @@ export function InventoryQuickViewModal({
           <View className="flex-row gap-x-3">
             <Pressable
               onPress={onViewDetails}
-              className="flex-1 bg-black py-4 rounded-xl items-center shadow-sm"
+              className="flex-1 bg-black py-3 rounded-xl items-center justify-center shadow-sm flex-row gap-x-2"
             >
-              <Text className="text-white font-bold text-base">Full Details</Text>
+              <Text className="text-white font-sans-bold text-sm">Full Details</Text>
+              <ArrowRight size={16} color="#FFFFFF" />
             </Pressable>
           </View>
         </View>

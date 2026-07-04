@@ -116,23 +116,23 @@ export function AreaChart({
 
   return (
     <View className="bg-white rounded-xl p-5 shadow-sm border border-natural-200 mb-4 w-full">
-      {title && <Text className="text-lg font-semibold text-black mb-4">{title}</Text>}
+      {title && <Text className="text-lg font-sans-semibold text-black mb-4">{title}</Text>}
       
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
         <View className="flex-row items-center mr-4">
           <View className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color1 }} />
-          <Text className="text-xs font-medium text-natural-500">{legend1}</Text>
+          <Text className="text-xs font-sans-medium text-natural-500">{legend1}</Text>
         </View>
         {data.some(d => d.value2 !== undefined) && (
           <View className="flex-row items-center mr-4">
             <View className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color2 }} />
-            <Text className="text-xs font-medium text-natural-500">{legend2}</Text>
+            <Text className="text-xs font-sans-medium text-natural-500">{legend2}</Text>
           </View>
         )}
         {legend3 && data.some(d => d.value3 !== undefined) && (
           <View className="flex-row items-center">
             <View className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: color3 }} />
-            <Text className="text-xs font-medium text-natural-500">{legend3}</Text>
+            <Text className="text-xs font-sans-medium text-natural-500">{legend3}</Text>
           </View>
         )}
       </View>

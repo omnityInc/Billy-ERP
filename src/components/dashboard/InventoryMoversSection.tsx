@@ -33,14 +33,14 @@ export function InventoryMoversSection() {
             <View className="w-10 h-10 rounded-full bg-[#DCFCE7] items-center justify-center mr-3">
               <TrendingUp color="#16A34A" size={20} />
             </View>
-            <Text className="text-lg font-bold text-black">Top Movers</Text>
+            <Text className="text-lg font-sans-bold text-black">Top Movers</Text>
           </View>
           
           <View>
             {TOP_MOVERS.map((item, idx) => (
               <View key={idx} className={`flex-row justify-between items-center py-3 ${idx !== TOP_MOVERS.length - 1 ? 'border-b border-natural-100' : ''}`}>
-                <Text className="text-sm font-medium text-natural-700">{item.name}</Text>
-                <Text className="text-sm font-bold text-[#16A34A]">{item.qty} sold</Text>
+                <Text className="text-sm font-sans-medium text-natural-700">{item.name}</Text>
+                <Text className="text-sm font-sans-bold text-[#16A34A]">{item.qty} sold</Text>
               </View>
             ))}
           </View>
@@ -52,14 +52,14 @@ export function InventoryMoversSection() {
             <View className="w-10 h-10 rounded-full bg-[#FEE2E2] items-center justify-center mr-3">
               <PackageX color="#DC2626" size={20} />
             </View>
-            <Text className="text-lg font-bold text-black">Dead Stock</Text>
+            <Text className="text-lg font-sans-bold text-black">Dead Stock</Text>
           </View>
           
           <View>
             {DEAD_STOCK.map((item, idx) => (
               <View key={idx} className={`flex-row justify-between items-center py-3 ${idx !== DEAD_STOCK.length - 1 ? 'border-b border-natural-100' : ''}`}>
-                <Text className="text-sm font-medium text-natural-700">{item.name}</Text>
-                <Text className="text-sm font-bold text-[#DC2626]">{item.qty} left</Text>
+                <Text className="text-sm font-sans-medium text-natural-700">{item.name}</Text>
+                <Text className="text-sm font-sans-bold text-[#DC2626]">{item.qty} left</Text>
               </View>
             ))}
           </View>

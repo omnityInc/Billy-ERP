@@ -43,7 +43,7 @@ export function SearchAndFilter({ placeholder = "Search...", filters }: Props) {
                    <Icon color="#64748B" size={16} />
                  </View>
                )}
-               <Text className="text-sm font-medium text-natural-700 mr-2">{filter.label}</Text>
+               <Text className="text-sm font-sans-medium text-natural-700 mr-2">{filter.label}</Text>
                <ChevronDown color="#64748B" size={16} />
              </Pressable>
           )
