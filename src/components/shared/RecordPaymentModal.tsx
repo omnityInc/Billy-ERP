@@ -1,14 +1,22 @@
-import { useState, useEffect, useCallback } from "react";
-import { Modal, Pressable, Text, TextInput, View, Platform, Keyboard } from "react-native";
-import { X, IndianRupee } from "lucide-react-native";
-import { formatINR } from "@/utils/format";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { mockApi } from "@/data/mockApi";
-import type { PaymentType, Paise } from "@/data/mock";
+import type { Paise, PaymentType } from "@/data/mock";
 import { toPaise } from "@/data/mock";
+import { mockApi } from "@/data/mockApi";
+import { formatINR } from "@/utils/format";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { IndianRupee, X } from "lucide-react-native";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Keyboard,
+  Modal,
+  Platform,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { z } from "zod";
 
 interface RecordPaymentModalProps {
   visible: boolean;
@@ -40,31 +48,38 @@ export function RecordPaymentModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payments"] });
       queryClient.invalidateQueries({ queryKey: ["invoice"] });
-    }
+    },
   });
 
   const paymentSchema = z.object({
-    amountStr: z.string().refine((val) => {
-      const num = parseFloat(val);
-      return !isNaN(num) && num > 0;
-    }, "Amount must be greater than 0")
-    .refine((val) => {
-      const num = parseFloat(val);
-      return Math.round(num * 100) <= outstandingAmountPaise;
-    }, "Cannot exceed outstanding amount"),
+    amountStr: z
+      .string()
+      .refine((val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      }, "Amount must be greater than 0")
+      .refine((val) => {
+        const num = parseFloat(val);
+        return Math.round(num * 100) <= outstandingAmountPaise;
+      }, "Cannot exceed outstanding amount"),
     paymentType: z.enum(["UPI", "CASH", "CHEQUE", "NEFT"] as const),
     remarks: z.string().optional(),
   });
 
   type PaymentFormValues = z.infer<typeof paymentSchema>;
 
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<PaymentFormValues>({
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       amountStr: "",
       paymentType: "UPI",
       remarks: "",
-    }
+    },
   });
 
   // Reset form when modal opens
@@ -82,8 +97,10 @@ export function RecordPaymentModal({
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+    const showEvent =
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+    const hideEvent =
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
 
     const showSub = Keyboard.addListener(showEvent, (e) => {
       setKeyboardHeight(e.endCoordinates.height);
@@ -98,11 +115,13 @@ export function RecordPaymentModal({
     };
   }, []);
 
-  const onSubmit = useCallback((data: PaymentFormValues) => {
+  const onSubmit = (data: PaymentFormValues) => {
     const amountNum = parseFloat(data.amountStr);
-    
+
     addMutation.mutate({
+      // eslint-disable-next-line react-hooks/purity
       id: Math.random().toString(36).substring(7),
+      // eslint-disable-next-line react-hooks/purity
       receiptNo: `RCPT-${Math.floor(Math.random() * 10000)}`,
       invoiceId,
       partyId,
@@ -114,7 +133,7 @@ export function RecordPaymentModal({
 
     Keyboard.dismiss();
     onClose();
-  }, [invoiceId, partyId, addMutation, onClose]);
+  };
 
   return (
     <Modal
@@ -126,20 +145,33 @@ export function RecordPaymentModal({
     >
       <View
         className="flex-1 justify-end"
-        style={{ 
+        style={{
           backgroundColor: "rgba(0, 0, 0, 0.5)",
-          paddingBottom: keyboardHeight 
+          paddingBottom: keyboardHeight,
         }}
       >
-        <Pressable className="flex-1" onPress={() => { Keyboard.dismiss(); onClose(); }} />
+        <Pressable
+          className="flex-1"
+          onPress={() => {
+            Keyboard.dismiss();
+            onClose();
+          }}
+        />
 
         <View className="bg-white rounded-t-3xl p-6 pb-8">
           <View className="flex-row justify-between items-center mb-6">
             <View>
-              <Text className="text-xl font-sans-bold text-black">Record Payment</Text>
-              <Text className="text-sm text-natural-500 mt-1">From {partyName}</Text>
+              <Text className="text-xl font-sans-bold text-black">
+                Record Payment
+              </Text>
+              <Text className="text-sm text-natural-500 mt-1">
+                From {partyName}
+              </Text>
             </View>
-            <Pressable onPress={onClose} className="p-2 bg-natural-100 rounded-full">
+            <Pressable
+              onPress={onClose}
+              className="p-2 bg-natural-100 rounded-full"
+            >
               <X size={20} color="#64748B" />
             </Pressable>
           </View>
@@ -147,17 +179,24 @@ export function RecordPaymentModal({
           {/* AMOUNT INPUT */}
           <View className="mb-6">
             <View className="flex-row justify-between items-end mb-2">
-              <Text className="text-sm font-sans-semibold text-natural-700">Payment Amount</Text>
+              <Text className="text-sm font-sans-semibold text-natural-700">
+                Payment Amount
+              </Text>
               <Text className="text-xs text-natural-500">
-                Outstanding: <Text className="font-sans-bold text-black">{formatINR(outstandingAmountPaise)}</Text>
+                Outstanding:{" "}
+                <Text className="font-sans-bold text-black">
+                  {formatINR(outstandingAmountPaise)}
+                </Text>
               </Text>
             </View>
-            
+
             <Controller
               control={control}
               name="amountStr"
               render={({ field: { onChange, onBlur, value } }) => (
-                <View className={`flex-row items-center border rounded-xl px-4 py-3 bg-natural-50 ${errors.amountStr ? "border-red-500" : "border-natural-300 focus:border-black"}`}>
+                <View
+                  className={`flex-row items-center border rounded-xl px-4 py-3 bg-natural-50 ${errors.amountStr ? "border-red-500" : "border-natural-300 focus:border-black"}`}
+                >
                   <IndianRupee size={20} color="#0F172A" />
                   <TextInput
                     value={value}
@@ -171,12 +210,18 @@ export function RecordPaymentModal({
                 </View>
               )}
             />
-            {errors.amountStr && <Text className="text-red-500 text-xs mt-1">{errors.amountStr.message}</Text>}
+            {errors.amountStr && (
+              <Text className="text-red-500 text-xs mt-1">
+                {errors.amountStr.message}
+              </Text>
+            )}
           </View>
 
           {/* PAYMENT METHOD */}
           <View className="mb-6">
-            <Text className="text-sm font-sans-semibold text-natural-700 mb-3">Payment Method</Text>
+            <Text className="text-sm font-sans-semibold text-natural-700 mb-3">
+              Payment Method
+            </Text>
             <Controller
               control={control}
               name="paymentType"
@@ -189,8 +234,8 @@ export function RecordPaymentModal({
                         key={method.value}
                         onPress={() => onChange(method.value)}
                         className={`px-4 py-2 rounded-full border ${
-                          isActive 
-                            ? "bg-black border-black" 
+                          isActive
+                            ? "bg-black border-black"
                             : "bg-white border-natural-200"
                         }`}
                       >
@@ -207,12 +252,18 @@ export function RecordPaymentModal({
                 </View>
               )}
             />
-            {errors.paymentType && <Text className="text-red-500 text-xs mt-1">{errors.paymentType.message}</Text>}
+            {errors.paymentType && (
+              <Text className="text-red-500 text-xs mt-1">
+                {errors.paymentType.message}
+              </Text>
+            )}
           </View>
 
           {/* REMARKS */}
           <View className="mb-8">
-            <Text className="text-sm font-sans-semibold text-natural-700 mb-2">Remarks (Optional)</Text>
+            <Text className="text-sm font-sans-semibold text-natural-700 mb-2">
+              Remarks (Optional)
+            </Text>
             <Controller
               control={control}
               name="remarks"
@@ -227,7 +278,11 @@ export function RecordPaymentModal({
                 />
               )}
             />
-            {errors.remarks && <Text className="text-red-500 text-xs mt-1">{errors.remarks.message}</Text>}
+            {errors.remarks && (
+              <Text className="text-red-500 text-xs mt-1">
+                {errors.remarks.message}
+              </Text>
+            )}
           </View>
 
           {/* ACTIONS */}
@@ -235,7 +290,9 @@ export function RecordPaymentModal({
             onPress={handleSubmit(onSubmit)}
             className="w-full bg-black py-4 rounded-xl items-center shadow-sm"
           >
-            <Text className="text-white font-sans-bold text-base">Confirm Payment</Text>
+            <Text className="text-white font-sans-bold text-base">
+              Confirm Payment
+            </Text>
           </Pressable>
         </View>
       </View>

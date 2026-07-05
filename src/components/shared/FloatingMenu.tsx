@@ -18,6 +18,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const MENU_ITEMS = [
   {

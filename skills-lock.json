@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "ai-interface-reviewer": {
+      "source": "uxuiprinciples/agent-skills",
+      "sourceType": "github",
+      "skillPath": "ai-interface-reviewer/SKILL.md",
+      "computedHash": "0bf577a99c285420145efa5db4d85feddec84a1954a564c42d9e1a49a718e032"
+    },
     "building-native-ui": {
       "source": "expo/skills",
       "sourceType": "github",
@@ -61,6 +67,18 @@
       "skillPath": "plugins/expo/skills/expo-ui/SKILL.md",
       "computedHash": "39c617d5aff2e0123caa35c13991e2c6d33ea3dc154b432972fb6ecbc73c2434"
     },
+    "flow-checker": {
+      "source": "uxuiprinciples/agent-skills",
+      "sourceType": "github",
+      "skillPath": "flow-checker/SKILL.md",
+      "computedHash": "53381c30c0b0636a134caf399bef566e810cba46f5a350da3a07451bdd35ca17"
+    },
+    "interface-auditor": {
+      "source": "uxuiprinciples/agent-skills",
+      "sourceType": "github",
+      "skillPath": "interface-auditor/SKILL.md",
+      "computedHash": "320f6aab6a528832daf06db4895e074ea9ab471339ad2901977c7a87d1da6dac"
+    },
     "native-data-fetching": {
       "source": "expo/skills",
       "sourceType": "github",
@@ -84,6 +102,18 @@
       "sourceType": "github",
       "skillPath": "plugins/expo/skills/upgrading-expo/SKILL.md",
       "computedHash": "a1c3049b7e78f66d78dbe38e4f4900980bbeffb825e1118da8e09cc6c89eea29"
+    },
+    "uxui-evaluator": {
+      "source": "uxuiprinciples/agent-skills",
+      "sourceType": "github",
+      "skillPath": "uxui-evaluator/SKILL.md",
+      "computedHash": "09d1822f8fe2f4b31fbfa4b8432923a2b6cd6487426ba1da2ff3baeb4fea0cc8"
+    },
+    "vibe-coding-advisor": {
+      "source": "uxuiprinciples/agent-skills",
+      "sourceType": "github",
+      "skillPath": "vibe-coding-advisor/SKILL.md",
+      "computedHash": "3c4f2a778ae786b2654d3932f80cb91e4d13e884f85a9cedc3f812efbcd29a67"
     }
   }
 }

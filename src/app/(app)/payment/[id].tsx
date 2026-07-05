@@ -17,7 +17,7 @@ export default function PaymentDetailsScreen() {
   const { data: parties = [], isLoading: isLoadingParties, isError: isErrorParties } = useQuery({ queryKey: ["parties"], queryFn: mockApi.getParties });
 
   const deleteMutation = useMutation({
-    mutationFn: () => mockApi.addPayment({ deleted: true }), // Mocking delete
+    mutationFn: () => mockApi.deletePayment(id as string),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["payments"] });
       router.back();

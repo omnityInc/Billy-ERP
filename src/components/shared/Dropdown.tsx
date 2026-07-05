@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Modal, FlatList, TouchableWithoutFeedback, Keyboard, TextInput } from 'react-native';
-import { ChevronDown, Search, X } from 'lucide-react-native';
+import { View, Text, Pressable, Modal, TouchableWithoutFeedback, Keyboard, TextInput } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import { ChevronDown, Search, X, Plus } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Input } from './Input';
 
@@ -19,6 +20,8 @@ export interface DropdownProps {
   error?: string;
   leftIcon?: React.ReactNode;
   searchable?: boolean;
+  onAddOption?: () => void;
+  addOptionLabel?: string;
 }
 
 export function Dropdown({
@@ -31,6 +34,8 @@ export function Dropdown({
   error,
   leftIcon,
   searchable = true,
+  onAddOption,
+  addOptionLabel,
 }: DropdownProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -99,22 +104,40 @@ export function Dropdown({
                 </View>
               )}
 
-              <FlatList
-                data={filteredOptions}
-                keyExtractor={(item) => item.value}
-                renderItem={({ item }) => (
-                  <Pressable 
-                    onPress={() => handleSelect(item.value)}
-                    className={`px-6 py-4 border-b border-natural-100 ${value === item.value ? 'bg-natural-50' : 'bg-white'}`}
-                  >
-                    <Text className={`text-sm ${value === item.value ? 'text-black font-sans-semibold' : 'text-natural-700'}`}>
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                )}
-                keyboardShouldPersistTaps="handled"
-                className="mb-8"
-              />
+              <View className="flex-1 min-h-[200px]">
+                <FlashList
+                  data={filteredOptions}
+                  keyExtractor={(item) => item.value}
+                  renderItem={({ item }) => (
+                    <Pressable 
+                      onPress={() => handleSelect(item.value)}
+                      className={`px-6 py-4 border-b border-natural-100 ${value === item.value ? 'bg-natural-50' : 'bg-white'}`}
+                    >
+                      <Text className={`text-sm ${value === item.value ? 'text-black font-sans-semibold' : 'text-natural-700'}`}>
+                        {item.label}
+                      </Text>
+                    </Pressable>
+                  )}
+                  keyboardShouldPersistTaps="handled"
+                  className="mb-8"
+                  ListFooterComponent={
+                    onAddOption ? (
+                      <Pressable 
+                        onPress={() => {
+                          setModalVisible(false);
+                          onAddOption();
+                        }}
+                        className="px-6 py-4 border-b border-natural-100 flex-row items-center"
+                      >
+                        <Plus color="#0F172A" size={20} />
+                        <Text className="text-sm text-black font-sans-medium ml-2">
+                          {addOptionLabel || 'Create New'}
+                        </Text>
+                      </Pressable>
+                    ) : null
+                  }
+                />
+              </View>
             </View>
           </View>
         </SafeAreaView>

@@ -1,18 +1,16 @@
+import { Button } from "@/components/shared/Button";
 import { useRouter } from "expo-router";
-import { ArrowRight } from "lucide-react-native";
-import { useRef, useState, useMemo } from "react";
 import { StatusBar } from "expo-status-bar";
+import { ArrowRight } from "lucide-react-native";
+import { useRef, useState, useCallback } from "react";
 import {
   FlatList,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   Pressable,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/shared/Button";
 
 const SLIDES = [
   {
@@ -31,6 +29,10 @@ const SLIDES = [
       "Billy turn complex operations into simple\nactions, so you can spend less time\nmanaging and more time growing",
   },
 ];
+
+const viewabilityConfig = {
+  itemVisiblePercentThreshold: 50,
+};
 
 export default function Onboarding() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -52,15 +54,11 @@ export default function Onboarding() {
     router.replace("/(auth)/log-in");
   };
 
-  const onViewableItemsChanged = useMemo(() => ({ viewableItems }: any) => {
+  const onViewableItemsChanged = useCallback(({ viewableItems }: any) => {
     if (viewableItems && viewableItems.length > 0) {
       setCurrentSlide(viewableItems[0].index);
     }
   }, []);
-
-  const viewabilityConfig = useMemo(() => ({
-    itemVisiblePercentThreshold: 50,
-  }), []);
 
   const isLastSlide = currentSlide === SLIDES.length - 1;
 
@@ -122,9 +120,15 @@ export default function Onboarding() {
 
           {/* Button */}
           <Button
-            title={isLastSlide ? 'Continue' : 'Next'}
+            title={isLastSlide ? "Continue" : "Next"}
             onPress={handleNext}
-            icon={isLastSlide ? <View className="ml-2"><ArrowRight color="#FFFFFF" size={20} /></View> : undefined}
+            icon={
+              isLastSlide ? (
+                <View className="ml-2">
+                  <ArrowRight color="#FFFFFF" size={20} />
+                </View>
+              ) : undefined
+            }
           />
         </View>
       </View>

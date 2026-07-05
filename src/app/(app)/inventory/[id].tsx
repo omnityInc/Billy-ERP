@@ -3,20 +3,14 @@ import { EditProductModal } from "@/components/shared/EditProductModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { mockApi } from "@/data/mockApi";
 import { Skeleton } from "@/components/shared/Skeleton";
-import { formatINR } from "@/utils/format";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
   AlertTriangle,
   ArrowLeft,
-  Box,
   CheckCircle2,
   Edit2,
-  IndianRupee,
-  Percent,
   Trash2,
-  TrendingDown,
-  TrendingUp,
   XCircle,
 } from "lucide-react-native";
 import { useState } from "react";
@@ -30,6 +24,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ProductStockCard } from "@/components/inventory/ProductStockCard";
+import { ProductPricingCard } from "@/components/inventory/ProductPricingCard";
+import { ProductInfoCard } from "@/components/inventory/ProductInfoCard";
+
 export default function ProductDetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -41,7 +39,7 @@ export default function ProductDetailsScreen() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => mockApi.updateProduct(id as string, { deleted: true }), // Mocking delete as update
+    mutationFn: () => mockApi.deleteProduct(id as string),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.back();
@@ -138,7 +136,6 @@ export default function ProductDetailsScreen() {
     );
   }
 
-
   const handleDelete = () => {
     if (!product) return;
     Alert.alert(
@@ -177,26 +174,25 @@ export default function ProductDetailsScreen() {
   const isOutOfStock = product.availableQty === 0;
   const isLowStock =
     product.availableQty > 0 && product.availableQty <= product.lowStock;
-  const inStock = product.availableQty > product.lowStock;
 
   const getStatusConfig = () => {
     if (isOutOfStock)
       return {
-        bg: "bg-[#FEE2E2]",
-        text: "text-[#991B1B]",
+        bg: "bg-danger-100",
+        text: "text-danger-800",
         label: "OUT OF STOCK",
         icon: <XCircle size={24} color="#991B1B" />,
       };
     if (isLowStock)
       return {
-        bg: "bg-[#FEF3C7]",
-        text: "text-[#92400E]",
+        bg: "bg-warning-100",
+        text: "text-warning-800",
         label: "LOW STOCK",
         icon: <AlertTriangle size={24} color="#92400E" />,
       };
     return {
-      bg: "bg-[#DCFCE7]",
-      text: "text-[#166534]",
+      bg: "bg-success-100",
+      text: "text-success-800",
       label: "IN STOCK",
       icon: <CheckCircle2 size={24} color="#166534" />,
     };
@@ -245,7 +241,7 @@ export default function ProductDetailsScreen() {
           </Pressable>
           <Pressable
             onPress={handleDelete}
-            className="p-2 bg-[#FEE2E2] rounded-full active:bg-[#FECACA] will-change-pressable"
+            className="p-2 bg-danger-100 rounded-full active:bg-danger-200 will-change-pressable"
           >
             <Trash2 size={18} color="#991B1B" />
           </Pressable>
@@ -256,136 +252,9 @@ export default function ProductDetailsScreen() {
         className="flex-1"
         contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
       >
-        {/* STOCK QTY CARD */}
-        <View
-          className={`rounded-2xl p-6 mb-4 ${status.bg} border-0 shadow-sm flex-row items-center`}
-        >
-          <View className="mr-4">{status.icon}</View>
-          <View className="flex-1">
-            <Text
-              className={`text-sm font-sans-bold ${status.text} mb-1 tracking-wider`}
-            >
-              AVAILABLE QUANTITY
-            </Text>
-            <Text className={`text-h1 ${status.text}`}>
-              {product.availableQty}{" "}
-              <Text className="text-body">{product.uom}</Text>
-            </Text>
-          </View>
-        </View>
-
-        {/* PRICING & TAXES CARD */}
-        <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
-          <View className="mb-4">
-            <Text className="text-caption text-natural-500 tracking-wider uppercase">
-              Pricing & Taxes
-            </Text>
-          </View>
-
-          <View className="flex-row justify-between mb-4">
-            <View className="flex-1 mr-2 bg-natural-50 p-3 rounded-xl">
-              <View className="flex-row items-center mb-1">
-                <TrendingUp size={14} color="#166534" className="mr-1.5" />
-                <Text className="text-caption text-natural-600">
-                  Sell Price
-                </Text>
-              </View>
-              <Text className="text-h3 text-black">
-                {formatINR(product.sellPricePaise)}
-              </Text>
-              {product.saleDiscount > 0 && (
-                <Text className="text-[10px] text-natural-500 mt-1">
-                  {product.saleDiscount}% off applied
-                </Text>
-              )}
-            </View>
-            <View className="flex-1 ml-2 bg-natural-50 p-3 rounded-xl">
-              <View className="flex-row items-center mb-1">
-                <TrendingDown size={14} color="#991B1B" className="mr-1.5" />
-                <Text className="text-caption text-natural-600">
-                  Purchase Price
-                </Text>
-              </View>
-              <Text className="text-h3 text-black">
-                {formatINR(product.purchasePricePaise)}
-              </Text>
-              {product.purchaseDiscount > 0 && (
-                <Text className="text-[10px] text-natural-500 mt-1">
-                  {product.purchaseDiscount}% off applied
-                </Text>
-              )}
-            </View>
-          </View>
-
-          <View className="flex-row justify-between pt-2">
-            <View className="flex-1">
-              <Text className="text-caption text-natural-500 mb-1">
-                GST Rate
-              </Text>
-              <View className="flex-row items-center">
-                <Percent size={14} color="#0F172A" className="mr-1" />
-                <Text className="text-body-strong text-black">
-                  {product.tax}%
-                </Text>
-              </View>
-            </View>
-            <View className="flex-1 items-end">
-              <Text className="text-caption text-natural-500 mb-1">
-                HSN/SAC Code
-              </Text>
-              <Text className="text-body-strong text-black">
-                {product.hsnSac}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* CLASSIFICATION CARD */}
-        <View className="bg-white rounded-2xl p-5 mb-8 border border-natural-200 shadow-sm">
-          <View className="mb-4">
-            <Text className="text-caption text-natural-500 tracking-wider uppercase">
-              Product Information
-            </Text>
-          </View>
-
-          <View className="flex-row justify-between mb-4">
-            <View className="flex-1">
-              <Text className="text-caption text-natural-500 mb-1">
-                Barcode / SKU
-              </Text>
-              <Text className="text-body-strong text-black">
-                {product.barcode}
-              </Text>
-            </View>
-            <View className="flex-1 items-end">
-              <Text className="text-caption text-natural-500 mb-1">
-                Category Group
-              </Text>
-              <Text className="text-body-strong text-black">
-                {product.group}
-              </Text>
-            </View>
-          </View>
-
-          <View className="flex-row justify-between">
-            <View className="flex-1">
-              <Text className="text-caption text-natural-500 mb-1">
-                Inventory Flow
-              </Text>
-              <Text className="text-body-strong text-black">
-                {product.inventoryType}
-              </Text>
-            </View>
-            <View className="flex-1 items-end">
-              <Text className="text-caption text-natural-500 mb-1">
-                Low Stock Alert
-              </Text>
-              <Text className="text-body-strong text-black">
-                {product.lowStock} {product.uom}
-              </Text>
-            </View>
-          </View>
-        </View>
+        <ProductStockCard product={product} status={status} />
+        <ProductPricingCard product={product} />
+        <ProductInfoCard product={product} />
       </ScrollView>
 
       {/* FIXED BOTTOM ACTION BAR */}
@@ -397,7 +266,7 @@ export default function ProductDetailsScreen() {
           onPress={() => setIsAdjustModalVisible(true)}
           className="w-full items-center justify-center py-4 bg-black rounded-xl shadow-sm"
         >
-          <Text className="text-white text-body text-center" numberOfLines={1}>
+          <Text className="text-white text-body font-sans-semibold text-center" numberOfLines={1}>
             Adjust Stock
           </Text>
         </Pressable>

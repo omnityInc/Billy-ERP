@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, Modal, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Pressable, Modal, TouchableWithoutFeedback } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { ChevronDown, X } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -58,21 +59,23 @@ export function FilterDropdown({ label, options, value, onSelect, icon: Icon }: 
                 </Pressable>
               </View>
 
-              <FlatList
-                data={options}
-                keyExtractor={(item) => item.value}
-                renderItem={({ item }) => (
-                  <Pressable 
-                    onPress={() => handleSelect(item.value)}
-                    className={`px-6 py-4 border-b border-natural-100 min-h-[44px] justify-center ${value === item.value ? 'bg-natural-50' : 'bg-white'}`}
-                  >
-                    <Text className={`text-base ${value === item.value ? 'text-black font-sans-semibold' : 'text-natural-700'}`}>
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                )}
-                className="mb-8"
-              />
+              <View className="flex-1 min-h-[200px]">
+                <FlashList
+                  data={options}
+                  keyExtractor={(item) => item.value}
+                  renderItem={({ item }) => (
+                    <Pressable 
+                      onPress={() => handleSelect(item.value)}
+                      className={`px-6 py-4 border-b border-natural-100 min-h-[44px] justify-center ${value === item.value ? 'bg-natural-50' : 'bg-white'}`}
+                    >
+                      <Text className={`text-base ${value === item.value ? 'text-black font-sans-semibold' : 'text-natural-700'}`}>
+                        {item.label}
+                      </Text>
+                    </Pressable>
+                  )}
+                  className="mb-8"
+                />
+              </View>
             </View>
           </View>
         </SafeAreaView>

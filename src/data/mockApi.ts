@@ -1,14 +1,22 @@
 import {
+  initializeMockData,
   lorryReceipts,
   parties,
   payments,
   products,
   purchaseInvoices,
   salesInvoices,
+  type Payment,
+  type Product,
+  type Party,
+  type Invoice,
 } from "./mock";
 
 // TODO: Remove this artificial delay in the future. It is currently set to 2.5s so we can visually test the skeleton loaders.
-const delay = (ms = 1100) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms = 1100) => new Promise((resolve) => {
+  initializeMockData();
+  setTimeout(resolve, ms);
+});
 
 export const mockApi = {
   // Queries
@@ -71,11 +79,11 @@ export const mockApi = {
   },
 
   // Mutations
-  addPayment: async (payment: any) => {
+  addPayment: async (payment: Omit<Payment, "id">) => {
     await delay();
     return { success: true, data: payment };
   },
-  updateProduct: async (id: string, data: any) => {
+  updateProduct: async (id: string, data: Partial<Product>) => {
     await delay();
     return { success: true, id, data };
   },
@@ -83,23 +91,39 @@ export const mockApi = {
     await delay();
     return { success: true, productId, adjustedQty: qty };
   },
-  addParty: async (party: any) => {
+  addParty: async (party: Omit<Party, "id">) => {
     await delay();
     return { success: true, data: party };
   },
-  updateParty: async (id: string, data: any) => {
+  updateParty: async (id: string, data: Partial<Party>) => {
     await delay();
     return { success: true, id, data };
   },
-  addInvoice: async (invoice: any) => {
+  addInvoice: async (invoice: Omit<Invoice, "id">) => {
     await delay();
     return { success: true, data: invoice };
   },
-  updateInvoice: async (id: string, data: any) => {
+  updateInvoice: async (id: string, data: Partial<Invoice>) => {
     await delay();
     return { success: true, id, data };
   },
   deleteInvoice: async (id: string) => {
+    await delay();
+    return { success: true, id };
+  },
+  deletePayment: async (id: string) => {
+    await delay();
+    return { success: true, id };
+  },
+  deleteProduct: async (id: string) => {
+    await delay();
+    return { success: true, id };
+  },
+  deleteParty: async (id: string) => {
+    await delay();
+    return { success: true, id };
+  },
+  deleteLorryReceipt: async (id: string) => {
     await delay();
     return { success: true, id };
   },

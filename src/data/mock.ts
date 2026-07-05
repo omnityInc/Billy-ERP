@@ -223,7 +223,13 @@ const stateCodes: Record<string, number> = {
   Haryana: 6, Telangana: 36,
 };
 
-for (let i = 1; i <= 150; i++) {
+let isInitialized = false;
+
+export function initializeMockData() {
+  if (isInitialized) return;
+  isInitialized = true;
+
+  for (let i = 1; i <= 150; i++) {
   const state = pick(states);
   const city = pick(cities);
   const pan = randomPAN();
@@ -333,9 +339,6 @@ for (let i = 1; i <= 300; i++) {
   });
 }
 
-const salesCustomers = parties.filter((p) => p.type === "CUSTOMER");
-const paymentTypes: PaymentType[] = ["CASH", "CREDIT", "UPI", "CHEQUE", "RTGS", "NEFT"];
-
 const invoiceStatus = (payment: PaymentType): "PAID" | "PARTIAL" | "UNPAID" => {
   if (payment !== "CREDIT") return "PAID";
   const r = random(1, 100);
@@ -343,6 +346,10 @@ const invoiceStatus = (payment: PaymentType): "PAID" | "PARTIAL" | "UNPAID" => {
   if (r <= 75) return "PARTIAL";
   return "UNPAID";
 };
+
+  const salesCustomers = parties.filter((p) => p.type === "CUSTOMER");
+  const paymentTypes: PaymentType[] = ["CASH", "CREDIT", "UPI", "CHEQUE", "RTGS", "NEFT"];
+
 
 for (let i = 1; i <= 500; i++) {
   const party = pick(salesCustomers);
@@ -409,9 +416,9 @@ for (let i = 1; i <= 500; i++) {
   });
 }
 
-const vendorParties = parties.filter((p) => p.type === "VENDOR");
+  const vendorParties = parties.filter((p) => p.type === "VENDOR");
 
-for (let i = 1; i <= 300; i++) {
+  for (let i = 1; i <= 300; i++) {
   const party = pick(vendorParties);
   const paymentType = pick(paymentTypes);
   const date = randomDate();
@@ -475,8 +482,8 @@ for (let i = 1; i <= 300; i++) {
   });
 }
 
-const allInvoices = [...salesInvoices, ...purchaseInvoices];
-for (const inv of allInvoices) {
+  const allInvoices = [...salesInvoices, ...purchaseInvoices];
+  for (const inv of allInvoices) {
   if (inv.status === "UNPAID") continue;
 
   if (inv.status === "PAID") {
@@ -504,8 +511,8 @@ for (const inv of allInvoices) {
   }
 }
 
-const transporters = ["VRL Logistics", "Patel Roadways", "Shree Maruti", "Gati", "TCI Freight"];
-for (let i = 1; i <= 200; i++) {
+  const transporters = ["VRL Logistics", "Patel Roadways", "Shree Maruti", "Gati", "TCI Freight"];
+  for (let i = 1; i <= 200; i++) {
   const inv = pick(salesInvoices);
   lorryReceipts.push({
     id: `LR${pad(i, 5)}`,
@@ -521,4 +528,5 @@ for (let i = 1; i <= 200; i++) {
     weight: random(100, 5000),
     status: pick(["GENERATED", "PENDING", "CANCELLED"]),
   });
+}
 }

@@ -2,28 +2,18 @@ import { RecordPaymentModal } from "@/components/shared/RecordPaymentModal";
 import { useQuery } from "@tanstack/react-query";
 import { mockApi } from "@/data/mockApi";
 import { Skeleton } from "@/components/shared/Skeleton";
-import { formatINR } from "@/utils/format";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import type { Paise } from "@/data/mock";
 import { StatusBar } from "expo-status-bar";
-import {
-  ArrowLeft,
-  Download,
-  Phone,
-  Printer,
-  Share2,
-} from "lucide-react-native";
+import { ArrowLeft, Download, Printer, Share2 } from "lucide-react-native";
 import { useState } from "react";
-import {
-  Linking,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Platform, Pressable, ScrollView, Text, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { InvoiceHeaderCard } from "@/components/invoice/InvoiceHeaderCard";
+import { InvoicePartyCard } from "@/components/invoice/InvoicePartyCard";
+import { InvoiceItemsList } from "@/components/invoice/InvoiceItemsList";
 
 export default function InvoiceDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -92,23 +82,6 @@ export default function InvoiceDetailsScreen() {
             <Skeleton height={24} width={180} className="mb-2" />
             <Skeleton height={16} width={120} />
           </View>
-          <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
-            <Text className="text-caption text-natural-500 mb-3 tracking-wider uppercase">Items</Text>
-            <View className="flex-row justify-between mb-4">
-              <View>
-                <Skeleton height={20} width={140} className="mb-2" />
-                <Skeleton height={16} width={80} />
-              </View>
-              <Skeleton height={20} width={60} />
-            </View>
-            <View className="flex-row justify-between">
-              <View>
-                <Skeleton height={20} width={160} className="mb-2" />
-                <Skeleton height={16} width={90} />
-              </View>
-              <Skeleton height={20} width={70} />
-            </View>
-          </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -136,31 +109,12 @@ export default function InvoiceDetailsScreen() {
     );
   }
 
-  // 2. Compute status styling
-  const getStatusStyle = () => {
-    switch (invoice.status) {
-      case "PAID":
-        return { bg: "bg-[#DCFCE7]", text: "text-[#166534]" };
-      case "UNPAID":
-        return { bg: "bg-[#FEE2E2]", text: "text-[#991B1B]" };
-      case "PARTIAL":
-        return { bg: "bg-[#DBEAFE]", text: "text-[#1E40AF]" };
-      default:
-        return { bg: "bg-[#FEF3C7]", text: "text-[#92400E]" };
-    }
-  };
-  const statusStyle = getStatusStyle();
-
-  // 3. Line Items & Payments logic
-  // Calculate Outstanding Balance
   const invoicePayments = payments.filter((p) => p.invoiceId === invoice.id);
   const totalPaid = invoicePayments.reduce((sum, p) => sum + p.amountPaise, 0);
   const outstandingAmountPaise = (invoice.grandTotalPaise - totalPaid) as Paise;
 
-  // Check if any item has discount to conditionally show column
   const hasDiscount = invoice.items.some((item) => item.discountPercent > 0);
 
-  // Combine items with product catalog info (e.g., hsnSac)
   const enrichedItems = invoice.items.map((item) => {
     const product = products.find((p) => p.id === item.productId);
     return {
@@ -205,184 +159,9 @@ export default function InvoiceDetailsScreen() {
         className="flex-1 px-4 pt-4"
         contentContainerStyle={{ paddingBottom: 120 }}
       >
-        {/* CARD 1: SUMMARY */}
-        <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
-          <View className="flex-row justify-between items-start mb-6">
-            <View>
-              <Text className="text-body-strong text-natural-500 mb-1 tracking-wider uppercase">
-                Invoice Amount
-              </Text>
-              <Text className="text-h1 text-black">
-                {formatINR(invoice.grandTotalPaise)}
-              </Text>
-            </View>
-            <View className={`px-3 py-1.5 rounded-full ${statusStyle.bg}`}>
-              <Text
-                className={`text-xs font-sans-bold uppercase tracking-wider ${statusStyle.text}`}
-              >
-                {invoice.status}
-              </Text>
-            </View>
-          </View>
-          <View className="flex-row justify-between pt-4 border-t border-natural-100">
-            <View>
-              <Text className="text-caption text-natural-500 mb-0.5">
-                DATE
-              </Text>
-              <Text className="text-body-strong text-black">
-                {invoice.date}
-              </Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-caption text-natural-500 mb-0.5">
-                DUE DATE
-              </Text>
-              <Text className="text-body-strong text-black">
-                {invoice.dueDate}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* CARD 2: BILL TO */}
-        <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
-          <View className="flex-row justify-between items-start mb-3">
-            <Text className="text-caption text-natural-500 tracking-wider uppercase">
-              Bill To
-            </Text>
-            <Pressable
-              onPress={() =>
-                party.phone && Linking.openURL(`tel:${party.phone}`)
-              }
-              className="p-2 bg-[#DBEAFE] border border-[#93C5FD] rounded-full -mt-2 -mr-2"
-            >
-              <Phone size={16} color="#1E40AF" />
-            </Pressable>
-          </View>
-          <Text className="text-h3 text-black mb-1">
-            {party.companyName}
-          </Text>
-          <Text className="text-body text-natural-600 mb-2 leading-5">
-            {party.billingAddress}, {party.city}, {party.state} -{" "}
-            {party.pincode}
-          </Text>
-          <View className="flex-row justify-between items-center bg-natural-50 p-3 rounded-lg border border-natural-100">
-            <View>
-              <Text className="text-caption text-natural-500 mb-0.5">GSTIN</Text>
-              <Text className="text-body-strong text-black">
-                {party.gstin}
-              </Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-caption text-natural-500 mb-0.5">Phone</Text>
-              <Text className="text-body-strong text-black">
-                {party.phone}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* CARD 3: LINE ITEMS (Horizontal Scrollable Table) */}
-        <View className="bg-white rounded-2xl p-5 mb-4 border border-natural-200 shadow-sm">
-          <Text className="text-caption text-natural-500 mb-3 tracking-wider uppercase">
-            Line Items
-          </Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 8 }}
-          >
-            <View>
-              {/* Table Header */}
-              <View className="flex-row border-b border-natural-200 pb-2 mb-2">
-                <Text className="text-caption text-natural-500 w-8">
-                  #
-                </Text>
-                <Text className="text-caption text-natural-500 w-32">
-                  Description
-                </Text>
-                <Text className="text-caption text-natural-500 w-24">
-                  HSN/SAC
-                </Text>
-                <Text className="text-caption text-natural-500 w-16 text-right">
-                  Qty
-                </Text>
-                <Text className="text-caption text-natural-500 w-24 text-right">
-                  Rate
-                </Text>
-                {hasDiscount && (
-                  <Text className="text-caption text-natural-500 w-16 text-right">
-                    Disc %
-                  </Text>
-                )}
-                <Text className="text-caption text-natural-500 w-24 text-right">
-                  Amount
-                </Text>
-              </View>
-
-              {/* Table Rows */}
-              {enrichedItems.map((item, index) => (
-                <View
-                  key={item.id}
-                  className="flex-row py-2 border-b border-natural-100"
-                >
-                  <Text className="text-caption text-black w-8">
-                    {index + 1}
-                  </Text>
-                  <Text
-                    className="text-caption text-black w-32"
-                    numberOfLines={2}
-                  >
-                    {item.productName}
-                  </Text>
-                  <Text className="text-caption text-natural-600 w-24">
-                    {item.hsnSac}
-                  </Text>
-                  <Text className="text-caption text-black w-16 text-right">
-                    {item.qty} {item.uom}
-                  </Text>
-                  <Text className="text-caption text-black w-24 text-right">
-                    {formatINR(item.ratePaise)}
-                  </Text>
-                  {hasDiscount && (
-                    <Text className="text-caption text-natural-600 w-16 text-right">
-                      {item.discountPercent}%
-                    </Text>
-                  )}
-                  <Text className="text-caption text-black w-24 text-right">
-                    {formatINR(item.totalPaise)}
-                  </Text>
-                </View>
-              ))}
-
-              {/* Table Totals */}
-              <View className="flex-row py-3 mt-1">
-                <View className="flex-1 mr-4">
-                  <Text className="text-caption text-natural-500 text-right">
-                    Subtotal:
-                  </Text>
-                  <Text className="text-caption text-natural-500 text-right mt-1">
-                    Tax Amount:
-                  </Text>
-                  <Text className="text-body-strong text-black text-right mt-2">
-                    Grand Total:
-                  </Text>
-                </View>
-                <View className="w-24">
-                  <Text className="text-caption text-black text-right">
-                    {formatINR(invoice.taxableAmountPaise)}
-                  </Text>
-                  <Text className="text-caption text-black text-right mt-1">
-                    {formatINR(invoice.taxAmountPaise)}
-                  </Text>
-                  <Text className="text-body-strong text-black text-right mt-2">
-                    {formatINR(invoice.grandTotalPaise)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
+        <InvoiceHeaderCard invoice={invoice} />
+        <InvoicePartyCard party={party} />
+        <InvoiceItemsList invoice={invoice} enrichedItems={enrichedItems} hasDiscount={hasDiscount} />
 
         {/* CARD 4: SCAN & PAY (UPI QR) */}
         <View className="bg-white rounded-2xl p-6 mb-8 border border-natural-200 shadow-sm items-center">
@@ -408,11 +187,11 @@ export default function InvoiceDetailsScreen() {
               </Text>
             </>
           ) : (
-            <View className="p-6 bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl w-full items-center">
-              <Text className="text-[#166534] text-h3 mb-1">
+            <View className="p-6 bg-success-50 border border-success-200 rounded-xl w-full items-center">
+              <Text className="text-success-800 text-h3 mb-1">
                 Fully Paid!
               </Text>
-              <Text className="text-[#15803D] text-body text-center">
+              <Text className="text-success-700 text-body text-center">
                 There is no outstanding balance for this invoice.
               </Text>
             </View>
@@ -427,13 +206,13 @@ export default function InvoiceDetailsScreen() {
       >
         <Pressable
           onPress={() => setIsPaymentModalVisible(true)}
-          className="flex-1 flex-row items-center justify-center py-4 bg-[#DCFCE7] border border-[#86EFAC] rounded-xl shadow-sm"
+          className="flex-1 flex-row items-center justify-center py-4 bg-success-100 border border-success-300 rounded-xl shadow-sm"
         >
-          <Text className="text-[#166534]">Record Payment</Text>
+          <Text className="text-success-800 font-sans-semibold">Record Payment</Text>
         </Pressable>
         <Pressable className="flex-1 flex-row items-center justify-center py-4 bg-black border border-natural-300 rounded-xl">
           <Printer size={18} color="#ffffff" />
-          <Text className="ml-2 text-white">Download PDF</Text>
+          <Text className="ml-2 text-white font-sans-semibold">Download PDF</Text>
         </Pressable>
       </View>
 
