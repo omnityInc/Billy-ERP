@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { ArrowRight } from "lucide-react-native";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   FlatList,
@@ -52,15 +52,15 @@ export default function Onboarding() {
     router.replace("/(auth)/log-in");
   };
 
-  const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
+  const onViewableItemsChanged = useMemo(() => ({ viewableItems }: any) => {
     if (viewableItems && viewableItems.length > 0) {
       setCurrentSlide(viewableItems[0].index);
     }
-  }).current;
+  }, []);
 
-  const viewabilityConfig = useRef({
+  const viewabilityConfig = useMemo(() => ({
     itemVisiblePercentThreshold: 50,
-  }).current;
+  }), []);
 
   const isLastSlide = currentSlide === SLIDES.length - 1;
 

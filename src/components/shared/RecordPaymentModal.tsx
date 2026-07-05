@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Modal, Pressable, Text, TextInput, View, Platform, Keyboard } from "react-native";
 import { X, IndianRupee } from "lucide-react-native";
 import { formatINR } from "@/utils/format";
@@ -98,7 +98,7 @@ export function RecordPaymentModal({
     };
   }, []);
 
-  const onSubmit = (data: PaymentFormValues) => {
+  const onSubmit = useCallback((data: PaymentFormValues) => {
     const amountNum = parseFloat(data.amountStr);
     
     addMutation.mutate({
@@ -114,7 +114,7 @@ export function RecordPaymentModal({
 
     Keyboard.dismiss();
     onClose();
-  };
+  }, [invoiceId, partyId, addMutation, onClose]);
 
   return (
     <Modal

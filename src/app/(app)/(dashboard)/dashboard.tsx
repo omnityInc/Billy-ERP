@@ -13,6 +13,7 @@ import { Search, CircleAlert, ArrowRight } from "lucide-react-native";
 import { ScrollView, Text, TextInput, View, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { GSTLiabilityCardSkeleton, SummaryCardSkeleton } from "@/components/shared/Skeleton";
+import { FloatingMenu } from "@/components/shared/FloatingMenu";
 import { useQuery } from "@tanstack/react-query";
 import { mockApi } from "@/data/mockApi";
 import { useRouter } from "expo-router";
@@ -189,6 +190,8 @@ export default function Dashboard() {
           </Text>
         </View>
       </ScrollView>
+      
+      <FloatingMenu />
     </SafeAreaView>
   );
 }

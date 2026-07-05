@@ -47,3 +47,6 @@ example
 /temp/
 temp/
 app-architecture.md
+.agents/
+audit/
+

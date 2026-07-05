@@ -16,6 +16,7 @@ export default function EWayDetailsScreen() {
   
   const queryClient = useQueryClient();
   const { data: lorryReceipts = [], isLoading, isError } = useQuery({ queryKey: ["lorryReceipts"], queryFn: mockApi.getEwayBills });
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
   const deleteMutation = useMutation({
     mutationFn: () => mockApi.addPayment({ deleted: true }), // Mocking delete
@@ -110,7 +111,7 @@ export default function EWayDetailsScreen() {
       </SafeAreaView>
     );
   }
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  
 
   if (!lr) {
     return (
